@@ -1,0 +1,103 @@
+(.venv) tiagotoloni@MacBook-Pro-de-Tiago aws-glue-delta % ./run.sh
+
+
+Iniciando Job ..... 2024-11-12 22:02:00 
+
+
+24/11/12 22:02:00 WARN Utils: Your hostname, MacBook-Pro-de-Tiago.local resolves to a loopback address: 127.0.0.1; using 192.168.0.125 instead (on interface en0)
+24/11/12 22:02:00 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+24/11/12 22:02:01 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+>> Extraindo Data Mesh .....
+
+Total de Registrso Mesh .... : 19
+
+>> Extraindo Cache .........
+
+Total de Registrso CNPJ9 .... : 3
+Total de Registrso CNPJ14 .... : 1
+Total de Registrso CONTA .... : 1
+Total de Registrso CARTEIRA .... : 1
+
+Transformando dados .......
+
+>> left
++-----------+----------------------------------------------------------------+-----------+-------------+------------------------------------+-----------------------------+------------------+
+|num_cpfcnpj|hash                                                            |num_cpfcnpj|num_cpfcnpj14|id_chave_cliente                    |des_nome_cliente_razao_social|des_cpfcnpj_status|
++-----------+----------------------------------------------------------------+-----------+-------------+------------------------------------+-----------------------------+------------------+
+|28         |6a9061b1a48ef8ce7904cb89c10362389ea4c44b53d259da4b788fd78d403820|28         |28000129     |d69d3be2-0001-4c67-b013-fd826869ff84|EMPRESA 28 NOVO NOME         |CNPJ9 ATIVO       |
+|34         |ba08094e1d09cae88d184d9069a925f9571915566e55c2b410849f9670dec94a|34         |34000191     |b37e3a9d-dcb5-0001-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ9 ATIVO       |
+|45         |fbef757b0c8b71eff8e16108791d881ce3154bb496535802a00bdb5487cca840|45         |45000154     |f29a1e21-8ab1-4e78-8c6c-e6dfb5c5d7f6|EMPRESA 45 NOVO NOME         |CNPJ9 INATIVO     |
+|50         |7a49942082162015276b28adcd32300782f3ae9431591e456a33166dc0709cf0|50         |50000118     |c9b0a6a1-7c42-4e54-83d3-2e07e0e3a8ab|EMPRESA 50                   |CNPJ9 ATIVO       |
+|60         |bb6acb8b413fe5b1af5a0ec0aad7e6bd8e2956f880e640015a097e36465556f7|60         |60000172     |d3a2bcde-f2c6-4937-90f7-5a0f3063f4b9|EMPRESA 60                   |CNPJ9 INATIVO     |
+|75         |7f98dc6906f193f30b4af380168751050abf27d177ec0e4b47a57959a4f70fb8|75         |75000189     |e7c1b23a-8d67-4e76-aed6-4c7f4175c3c4|EMPRESA 75                   |CNPJ9 ATIVO       |
++-----------+----------------------------------------------------------------+-----------+-------------+------------------------------------+-----------------------------+------------------+
+
+>> df_cache
++-----------+----------------------------------------------------------------+
+|num_cpfcnpj|hash                                                            |
++-----------+----------------------------------------------------------------+
+|28         |6a9061b1a48ef8ce7904cb89c10362389ea4c44b53d259da4b788fd78d403820|
+|45         |fbef757b0c8b71eff8e16108791d881ce3154bb496535802a00bdb5487cca200|
+|90         |bda419f9694c22f6e73a5ecde28f0c0940a5405a32118014dab01afb1dcebaaa|
++-----------+----------------------------------------------------------------+
+
+Compare: >>> Left
++-----------+----------------------------------------------------------------+
+|num_cpfcnpj|hash                                                            |
++-----------+----------------------------------------------------------------+
+|28         |6a9061b1a48ef8ce7904cb89c10362389ea4c44b53d259da4b788fd78d403820|
+|34         |ba08094e1d09cae88d184d9069a925f9571915566e55c2b410849f9670dec94a|
+|45         |fbef757b0c8b71eff8e16108791d881ce3154bb496535802a00bdb5487cca840|
+|50         |7a49942082162015276b28adcd32300782f3ae9431591e456a33166dc0709cf0|
+|60         |bb6acb8b413fe5b1af5a0ec0aad7e6bd8e2956f880e640015a097e36465556f7|
+|75         |7f98dc6906f193f30b4af380168751050abf27d177ec0e4b47a57959a4f70fb8|
++-----------+----------------------------------------------------------------+
+
+Compare: >>> right
++-----------+----------------------------------------------------------------+
+|num_cpfcnpj|hash                                                            |
++-----------+----------------------------------------------------------------+
+|28         |6a9061b1a48ef8ce7904cb89c10362389ea4c44b53d259da4b788fd78d403820|
+|45         |fbef757b0c8b71eff8e16108791d881ce3154bb496535802a00bdb5487cca200|
+|90         |bda419f9694c22f6e73a5ecde28f0c0940a5405a32118014dab01afb1dcebaaa|
++-----------+----------------------------------------------------------------+
+
+Input - Ultima Particao..: 6
+Input - Particao Anterior: 3
+Delta - Inseridos........: 4
+Delta - Deletados........: 1
+Delta - Atualizados......: 1
+>> df_compared
++-----------+------+
+|num_cpfcnpj|status|
++-----------+------+
+|34         |I     |
+|75         |I     |
+|60         |I     |
+|50         |I     |
+|90         |D     |
+|45         |U     |
++-----------+------+
+
+>> Delta
++-----------+--------------------+-------------+--------------------+-----------------------------+------------------+------+
+|num_cpfcnpj|                hash|num_cpfcnpj14|    id_chave_cliente|des_nome_cliente_razao_social|des_cpfcnpj_status|status|
++-----------+--------------------+-------------+--------------------+-----------------------------+------------------+------+
+|         34|ba08094e1d09cae88...|     34000191|b37e3a9d-dcb5-000...|                   EMPRESA 34|       CNPJ9 ATIVO|     I|
+|         75|7f98dc6906f193f30...|     75000189|e7c1b23a-8d67-4e7...|                   EMPRESA 75|       CNPJ9 ATIVO|     I|
+|         60|bb6acb8b413fe5b1a...|     60000172|d3a2bcde-f2c6-493...|                   EMPRESA 60|     CNPJ9 INATIVO|     I|
+|         50|7a499420821620152...|     50000118|c9b0a6a1-7c42-4e5...|                   EMPRESA 50|       CNPJ9 ATIVO|     I|
+|         90|                NULL|         NULL|                NULL|                         NULL|              NULL|     D|
+|         45|fbef757b0c8b71eff...|     45000154|f29a1e21-8ab1-4e7...|         EMPRESA 45 NOVO NOME|     CNPJ9 INATIVO|     U|
++-----------+--------------------+-------------+--------------------+-----------------------------+------------------+------+
+
+
+Carregando Dados ........
+
+
+
+Finalizando Job ..... 2024-11-12 22:02:05 
+Tempo de execução ...: 5.36101 segundos
