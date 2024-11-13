@@ -1,0 +1,187 @@
+Extraindo Data Mesh .....
+
+Partição 20241020 .......: 7
+Partição 20241030 .......: 12
+
+Transformando dados .......
+
+Transformando CNPJ9 .....
+Input - Ultima Particao..: 8
+Input - Particao Anterior: 7
+Delta - Inseridos........: 3
+Delta - Deletados........: 2
+Delta - Atualizados......: 2
+
+Transformando CNPJ14 .....
+Input - Ultima Particao..: 12
+Input - Particao Anterior: 7
+Delta - Inseridos........: 7
+Delta - Deletados........: 2
+Delta - Atualizados......: 2
+
+Transformando CONTA .....
+Input - Ultima Particao..: 8
+Input - Particao Anterior: 7
+Delta - Inseridos........: 3
+Delta - Deletados........: 2
+Delta - Atualizados......: 2
+
+Transformando CARTEIRA .....
+Input - Ultima Particao..: 8
+Input - Particao Anterior: 7
+Delta - Inseridos........: 4
+Delta - Deletados........: 3
+Delta - Atualizados......: 0
+
+Carregando Dados ........
+
+Carregado CNPJ9 .....: 7
++-----------+------------------------------------+-----------------------------+------------------+---------+------+------------------+
+|num_cpfcnpj|id_chave_cliente                    |des_nome_cliente_razao_social|des_cpfcnpj_status|anomesdia|status|data_processamento|
++-----------+------------------------------------+-----------------------------+------------------+---------+------+------------------+
+|50         |c9b0a6a1-7c42-4e54-83d3-2e07e0e3a8ab|EMPRESA 50                   |CNPJ9 ATIVO       |20241030 |I     |20241020          |
+|60         |d3a2bcde-f2c6-4937-90f7-5a0f3063f4b9|EMPRESA 60                   |CNPJ9 INATIVO     |20241030 |I     |20241020          |
+|75         |e7c1b23a-8d67-4e76-aed6-4c7f4175c3c4|EMPRESA 75                   |CNPJ9 ATIVO       |20241030 |I     |20241020          |
+|105        |d1a4f2bd-6a8e-43b1-807e-91b5d2c3d8f3|EMPRESA 105                  |CNPJ9 ATIVO       |20241020 |D     |20241020          |
+|92         |b0c7d6ef-1f67-4e21-b2a7-c9c5f2e1d9a9|EMPRESA 92                   |CNPJ9 INATIVO     |20241020 |D     |20241020          |
+|28         |d69d3be2-0001-4c67-b013-fd826869ff84|EMPRESA 28 NOVO NOME         |CNPJ9 ATIVO       |20241030 |U     |20241020          |
+|45         |f29a1e21-8ab1-4e78-8c6c-e6dfb5c5d7f6|EMPRESA 45 NOVO NOME         |CNPJ9 INATIVO     |20241030 |U     |20241020          |
++-----------+------------------------------------+-----------------------------+------------------+---------+------+------------------+
+
+Carregado CNPJ14 .....: 11
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+------------------+
+|num_cpfcnpj14|num_cpfcnpj|id_chave_cliente                    |des_nome_cliente_razao_social|des_cpfcnpj14_status|anomesdia|status|data_processamento|
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+------------------+
+|28000229     |28         |d69d3be2-0002-4c67-b013-fd826869ff84|EMPRESA 28 EMPRESA 2         |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|34000291     |34         |b37e3a9d-dcb5-0002-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|34000391     |34         |b37e3a9d-dcb5-0003-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|34000491     |34         |b37e3a9d-dcb5-0004-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|50000418     |50         |c9b0a6a1-7c42-4e54-83d3-2e07e0e3a8ab|EMPRESA 50                   |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|60000572     |60         |d3a2bcde-f2c6-4937-90f7-5a0f3063f4b9|EMPRESA 60                   |CNPJ14 ATIVO        |20241030 |I     |20241020          |
+|75000689     |75         |e7c1b23a-8d67-4e76-aed6-4c7f4175c3c4|EMPRESA 75                   |CNPJ14 INATIVO      |20241030 |I     |20241020          |
+|10500092     |105        |d1a4f2bd-6a8e-43b1-807e-91b5d2c3d8f3|EMPRESA 105                  |CNPJ14 ATIVO        |20241020 |D     |20241020          |
+|92000813     |92         |b0c7d6ef-1f67-4e21-b2a7-c9c5f2e1d9a9|EMPRESA 92                   |CNPJ14 INATIVO      |20241020 |D     |20241020          |
+|28000129     |28         |d69d3be2-0001-4c67-b013-fd826869ff84|EMPRESA 28 NOVO NOME         |CNPJ14 ATIVO        |20241030 |U     |20241020          |
+|45000354     |45         |f29a1e21-8ab1-4e78-8c6c-e6dfb5c5d7f6|EMPRESA 45 NOVO NOME         |CNPJ14 INATIVO      |20241030 |U     |20241020          |
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+------------------+
+
+Carregado CONTA .....: 7
++-----------+---------+-------------+---------------+----------------+---------+------+------------------+
+|num_agencia|num_conta|num_conta_dac|des_segmentacao|des_conta_status|anomesdia|status|data_processamento|
++-----------+---------+-------------+---------------+----------------+---------+------+------------------+
+|183        |7427     |4            |PRIVATE        |CONTA ATIVA     |20241030 |I     |20241020          |
+|184        |7441     |8            |RETAIL         |CONTA BLOQUEADA |20241030 |I     |20241020          |
+|187        |7439     |6            |BUSINESS       |CONTA ATIVA     |20241030 |I     |20241020          |
+|185        |7466     |9            |PRIVATE        |CONTA ENCERRADA |20241020 |D     |20241020          |
+|189        |7478     |2            |BUSINESS       |CONTA ATIVA     |20241020 |D     |20241020          |
+|181        |7483     |3            |BUSINESS       |CONTA ATIVA     |20241030 |U     |20241020          |
+|186        |7399     |5            |BUSINESS       |CONTA ENCERRADA |20241030 |U     |20241020          |
++-----------+---------+-------------+---------------+----------------+---------+------+------------------+
+
+Carregado CARTEIRA .....: 7
++--------------------------+-------------------------+----------------------+---------+------+------------------+
+|cod_hierarquia_gq_segmento|cod_hierarquia_plataforma|cod_hierarquia_gerente|anomesdia|status|data_processamento|
++--------------------------+-------------------------+----------------------+---------+------+------------------+
+|A                         |742                      |58                    |20241030 |I     |20241020          |
+|B                         |744                      |62                    |20241030 |I     |20241020          |
+|D                         |743                      |60                    |20241030 |I     |20241020          |
+|D                         |750                      |51                    |20241030 |I     |20241020          |
+|A                         |746                      |68                    |20241020 |D     |20241020          |
+|D                         |738                      |51                    |20241020 |D     |20241020          |
+|D                         |747                      |70                    |20241020 |D     |20241020          |
++--------------------------+-------------------------+----------------------+---------+------+------------------+
+
+
+
+
+Iniciando Job ..... 2024-11-10 16:58:09 
+
+
+24/11/10 16:58:09 WARN Utils: Your hostname, MacBook-Pro-de-Tiago.local resolves to a loopback address: 127.0.0.1; using 192.168.0.125 instead (on interface en0)
+24/11/10 16:58:09 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+24/11/10 16:58:09 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+Extraindo Data Mesh .....
+
+Erro ao obter a penúltima data Mesh: list index out of range
+Erro ao obter a última data delta: [PATH_NOT_FOUND] Path does not exist: file:/Users/tiagotoloni/Public/aws-glue-delta/data/output/delta_cnpj9.
+Erro ao obter a última data delta: [PATH_NOT_FOUND] Path does not exist: file:/Users/tiagotoloni/Public/aws-glue-delta/data/output/delta_cnpj14.
+Erro ao obter a última data delta: [PATH_NOT_FOUND] Path does not exist: file:/Users/tiagotoloni/Public/aws-glue-delta/data/output/delta_conta.
+Erro ao obter a última data delta: [PATH_NOT_FOUND] Path does not exist: file:/Users/tiagotoloni/Public/aws-glue-delta/data/output/delta_carteira.
+Partição None .......: 0
+Partição 20241030 .......: 12
+
+Transformando dados .......
+
+Transformando CNPJ9 .....
+
+Transformando CNPJ14 .....
+
+Transformando CONTA .....
+
+Transformando CARTEIRA .....
+
+Carregando Dados ........
+
+Carregado CNPJ9 .....: 8
++-----------+------------------------------------+-----------------------------+------------------+---------+------+
+|num_cpfcnpj|id_chave_cliente                    |des_nome_cliente_razao_social|des_cpfcnpj_status|anomesdia|status|
++-----------+------------------------------------+-----------------------------+------------------+---------+------+
+|110        |f3b5c2d9-7c3a-46d4-9382-f0b6e1d4f3d0|EMPRESA 110                  |CNPJ9 ATIVO       |20241030 |FULL  |
+|28         |d69d3be2-0001-4c67-b013-fd826869ff84|EMPRESA 28 NOVO NOME         |CNPJ9 ATIVO       |20241030 |FULL  |
+|34         |b37e3a9d-dcb5-0001-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ9 ATIVO       |20241030 |FULL  |
+|45         |f29a1e21-8ab1-4e78-8c6c-e6dfb5c5d7f6|EMPRESA 45 NOVO NOME         |CNPJ9 INATIVO     |20241030 |FULL  |
+|50         |c9b0a6a1-7c42-4e54-83d3-2e07e0e3a8ab|EMPRESA 50                   |CNPJ9 ATIVO       |20241030 |FULL  |
+|60         |d3a2bcde-f2c6-4937-90f7-5a0f3063f4b9|EMPRESA 60                   |CNPJ9 INATIVO     |20241030 |FULL  |
+|75         |e7c1b23a-8d67-4e76-aed6-4c7f4175c3c4|EMPRESA 75                   |CNPJ9 ATIVO       |20241030 |FULL  |
+|82         |a8d9f2e4-3b54-4f89-a2cb-74b8d5b7e6d5|EMPRESA 82                   |CNPJ9 ATIVO       |20241030 |FULL  |
++-----------+------------------------------------+-----------------------------+------------------+---------+------+
+
+Carregado CNPJ14 .....: 12
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+
+|num_cpfcnpj14|num_cpfcnpj|id_chave_cliente                    |des_nome_cliente_razao_social|des_cpfcnpj14_status|anomesdia|status|
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+
+|11000946     |110        |f3b5c2d9-7c3a-46d4-9382-f0b6e1d4f3d0|EMPRESA 110                  |CNPJ14 ATIVO        |20241030 |FULL  |
+|28000129     |28         |d69d3be2-0001-4c67-b013-fd826869ff84|EMPRESA 28 NOVO NOME         |CNPJ14 ATIVO        |20241030 |FULL  |
+|28000229     |28         |d69d3be2-0002-4c67-b013-fd826869ff84|EMPRESA 28 EMPRESA 2         |CNPJ14 ATIVO        |20241030 |FULL  |
+|34000191     |34         |b37e3a9d-dcb5-0001-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|34000291     |34         |b37e3a9d-dcb5-0002-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|34000391     |34         |b37e3a9d-dcb5-0003-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|34000491     |34         |b37e3a9d-dcb5-0004-84b5-b91a2b6d9e5d|EMPRESA 34                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|45000354     |45         |f29a1e21-8ab1-4e78-8c6c-e6dfb5c5d7f6|EMPRESA 45 NOVO NOME         |CNPJ14 INATIVO      |20241030 |FULL  |
+|50000418     |50         |c9b0a6a1-7c42-4e54-83d3-2e07e0e3a8ab|EMPRESA 50                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|60000572     |60         |d3a2bcde-f2c6-4937-90f7-5a0f3063f4b9|EMPRESA 60                   |CNPJ14 ATIVO        |20241030 |FULL  |
+|75000689     |75         |e7c1b23a-8d67-4e76-aed6-4c7f4175c3c4|EMPRESA 75                   |CNPJ14 INATIVO      |20241030 |FULL  |
+|82000751     |82         |a8d9f2e4-3b54-4f89-a2cb-74b8d5b7e6d5|EMPRESA 82                   |CNPJ14 ATIVO        |20241030 |FULL  |
++-------------+-----------+------------------------------------+-----------------------------+--------------------+---------+------+
+
+Carregado CONTA .....: 8
++-----------+---------+-------------+---------------+----------------+---------+------+
+|num_agencia|num_conta|num_conta_dac|des_segmentacao|des_conta_status|anomesdia|status|
++-----------+---------+-------------+---------------+----------------+---------+------+
+|180        |7452     |1            |CORPORATE      |CONTA ATIVA     |20241030 |FULL  |
+|181        |7483     |3            |BUSINESS       |CONTA ATIVA     |20241030 |FULL  |
+|182        |7402     |7            |RETAIL         |CONTA ATIVA     |20241030 |FULL  |
+|183        |7427     |4            |PRIVATE        |CONTA ATIVA     |20241030 |FULL  |
+|184        |7441     |8            |RETAIL         |CONTA BLOQUEADA |20241030 |FULL  |
+|186        |7399     |5            |BUSINESS       |CONTA ENCERRADA |20241030 |FULL  |
+|187        |7439     |6            |BUSINESS       |CONTA ATIVA     |20241030 |FULL  |
+|188        |7414     |3            |CORPORATE      |CONTA ENCERRADA |20241030 |FULL  |
++-----------+---------+-------------+---------------+----------------+---------+------+
+
+Carregado CARTEIRA .....: 8
++--------------------------+-------------------------+----------------------+---------+------+
+|cod_hierarquia_gq_segmento|cod_hierarquia_plataforma|cod_hierarquia_gerente|anomesdia|status|
++--------------------------+-------------------------+----------------------+---------+------+
+|A                         |742                      |58                    |20241030 |FULL  |
+|B                         |740                      |53                    |20241030 |FULL  |
+|B                         |744                      |62                    |20241030 |FULL  |
+|B                         |748                      |72                    |20241030 |FULL  |
+|C                         |741                      |55                    |20241030 |FULL  |
+|C                         |745                      |65                    |20241030 |FULL  |
+|D                         |743                      |60                    |20241030 |FULL  |
+|D                         |750                      |51                    |20241030 |FULL  |
++--------------------------+-------------------------+----------------------+---------+------+
+

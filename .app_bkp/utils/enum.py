@@ -31,7 +31,7 @@ class ColsPK(Enum):
     ]
 
 
-class ColsHASH(Enum):
+class ColsCOMPARE(Enum):
     """
     Colunas para utilização no Join
     """
@@ -63,11 +63,10 @@ class ColsALL(Enum):
 
     CNPJ9 = [
         "num_cpfcnpj",
-        "num_cpfcnpj14",
         "id_chave_cliente",
         "des_nome_cliente_razao_social",
         "des_cpfcnpj_status",
-        # "anomesdia",
+        "anomesdia",
     ]
     CNPJ14 = [
         "num_cpfcnpj14",
@@ -92,11 +91,3 @@ class ColsALL(Enum):
         "cod_hierarquia_gerente",
         "anomesdia",
     ]
-
-
-class ColsCACHE(Enum):
-    """
-    Colunas Bases do Cache
-    """
-
-    CNPJ9 = ["num_cpfcnpj", "hash"]
