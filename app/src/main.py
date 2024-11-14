@@ -13,7 +13,7 @@ from utils.enum import Base
 from utils.extract import get_last_partition_mesh, get_cache_bases
 
 from utils.load import load
-from utils.transform import transform
+from utils.transform import transform_cnpj9
 
 start_time = time.time()
 hora_atual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -65,7 +65,9 @@ print("\nTransformando dados .......\n")
 
 df_delta = {}
 
-df_delta = transform(df_mesh, input_cache[Base.CNPJ9], Base.CNPJ9.name)
+df_delta = transform_cnpj9(df_mesh, input_cache[Base.CNPJ9], Base.CNPJ9.name)
+print(">> Delta:")
+df_delta.show()
 
 
 #

@@ -12,6 +12,19 @@ class Base(Enum):
     CARTEIRA = "CARTEIRA"
 
 
+class Status(Enum):
+    """
+    Dominio para coluna status
+    """
+
+    INSERT = "I"
+    UPDATE = "U"
+    DELETE = "D"
+
+    def get_col_name():
+        return "status"
+
+
 class ColsPK(Enum):
     """
     Colunas Chaves para utilização no Join
