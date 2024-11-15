@@ -13,7 +13,7 @@ from utils.enum import Base
 from utils.extract import get_last_partition_mesh, get_cache_bases
 
 from utils.load import load
-from utils.transform import transform_cnpj9
+from utils.transform import transform
 
 start_time = time.time()
 hora_atual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -61,30 +61,25 @@ for base in Base:
 # ============================================================================ #
 #                            TRANSFORM  >>  LOAD                               #
 # ============================================================================ #
+#
+#
 print("\nTransformando dados .......\n")
 
-df_delta = {}
+df_delta_cnpj9 = transform(df_mesh, input_cache[Base.CNPJ9], Base.CNPJ9.name)
+print(">> Delta Cnpj9")
+df_delta_cnpj9.show(truncate=False)
 
-df_delta = transform_cnpj9(df_mesh, input_cache[Base.CNPJ9], Base.CNPJ9.name)
-print(">> Delta:")
-df_delta.show()
+df_delta_cnpj14 = transform(df_mesh, input_cache[Base.CNPJ14], Base.CNPJ14.name)
+print(">> Delta Cnpj14")
+df_delta_cnpj14.show(truncate=False)
 
+df_delta_carteira = transform(df_mesh, input_cache[Base.CARTEIRA], Base.CARTEIRA.name)
+print(">> Delta Carteira")
+df_delta_carteira.show(truncate=False)
 
-#
-
-# df_delta_cnpj14 = transform(partitions_mesh_df, partitions_dates, Base.CNPJ14.value)
-# df_delta_conta = transform(partitions_mesh_df, partitions_dates, Base.CONTA.value)
-# df_delta_carteira = transform(partitions_mesh_df, partitions_dates, Base.CARTEIRA.value)
-
-# ============================================================================ #
-#                                   LOAD                                       #
-# ============================================================================ #
-print("\nCarregando Dados ........\n")
-
-# load(df_delta_cnpj9, Base.CNPJ9.value, path_delta_cnpj9)
-# load(df_delta_cnpj14, Base.CNPJ14.value, path_delta_cnpj14)
-# load(df_delta_conta, Base.CONTA.value, path_delta_conta)
-# load(df_delta_carteira, Base.CARTEIRA.value, path_delta_carteira)
+df_delta_conta = transform(df_mesh, input_cache[Base.CONTA], Base.CONTA.name)
+print(">> Delta Conta")
+df_delta_conta.show(truncate=False)
 
 
 # ============================================================================ #
