@@ -1,6 +1,17 @@
 from enum import Enum
 
 
+class Job(Enum):
+    """
+    Nome dos Jobs
+    """
+
+    CNPJ9 = "JobCNPJ9"
+    CNPJ14 = "JobCNPJ14"
+    CONTA = "JobCONTA"
+    CARTEIRA = "JobCARTEIRA"
+
+
 class Base(Enum):
     """
     Nome das Bases

@@ -6,4 +6,4 @@
 export PYTHONPATH=app
 
 # Executar o script Python
-python3 app/src/main.py
+python3 app/src/local_main.py

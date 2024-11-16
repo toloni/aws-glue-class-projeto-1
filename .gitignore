@@ -7,3 +7,4 @@ data/output
 **cache**
 app/tests/result.txt
 .DS_Store
+.app*

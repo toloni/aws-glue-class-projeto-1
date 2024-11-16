@@ -1,7 +1,7 @@
 import pytest
 from pyspark.sql import SparkSession, Row, DataFrame
 
-from utils.transform import transform
+from utils.sub_modules.transform import __transform_data
 
 
 @pytest.fixture(scope="module")
@@ -14,7 +14,7 @@ def test_transform(spark):
     df_cache = __cache_data(spark)
 
     base = "CNPJ14"
-    df_atual = transform(df_mesh, df_cache, base)
+    df_atual = __transform_data(df_mesh, df_cache, base)
     df_expected = __expected_data(spark)
 
     df_atual_row = {}
