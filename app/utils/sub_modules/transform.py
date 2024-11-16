@@ -117,7 +117,12 @@ def __prepare_mesh_data(
     """Prepara o DataFrame Mesh: remove duplicados, adiciona hash e primary key."""
     return (
         df_mesh.dropDuplicates(primary_keys)
-        .withColumns(__mesh_key_columns(primary_keys, hash_columns))
+        .withColumns(
+            {
+                "mesh_hash": sha2(concat(*hash_columns), 256),
+                "primary_key": concat(*primary_keys),
+            }
+        )
         .select(*mesh_columns, "mesh_hash", "primary_key")
     )
 
@@ -128,15 +133,6 @@ def __prepare_cache_data(df_cache: DataFrame, cache_columns) -> DataFrame:
     return df_cache.withColumnRenamed("hash", "cache_hash").withColumn(
         "primary_key", concat(*cache_columns)
     )
-
-
-# -------------------------------------------------------------------------------------- #
-def __mesh_key_columns(primary_keys, hash_columns) -> Dict:
-    """Gera as colunas hash e primary key para a base Mesh."""
-    return {
-        "mesh_hash": sha2(concat(*hash_columns), 256),
-        "primary_key": concat(*primary_keys),
-    }
 
 
 # -------------------------------------------------------------------------------------- #
