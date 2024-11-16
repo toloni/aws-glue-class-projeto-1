@@ -17,7 +17,7 @@ from utils.sub_modules.load import load
 # Configuração do logger
 logging.basicConfig(
     level=logging.INFO,
-    format="%(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
