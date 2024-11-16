@@ -39,9 +39,6 @@ def transform_load(
 
     for base in Base:
 
-        # columns = ColumnDefinitions.get_columns(B[base].value, "primary_keys")
-        # print(*columns)
-
         logger.info(f"Iniciando transformação para a base: {base.name}")
         df_transformed = __transform_data(df_input, dict_df_cache[base], base.name)
 
