@@ -11,16 +11,6 @@ from pyspark.sql.functions import (
     current_timestamp,
 )
 
-# from utils.enum import (
-#     Base,
-#     ColumnMeshPK,
-#     ColumnMeshHash,
-#     ColumnMesh,
-#     ColumnCachePK,
-#     Status,
-#     ColumnDelta,
-# )
-
 from utils.column_definitions import Base, Status, ColumnDefinitions
 from utils.sub_modules.load import load
 
