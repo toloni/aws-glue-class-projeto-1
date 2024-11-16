@@ -11,16 +11,17 @@ from pyspark.sql.functions import (
     current_timestamp,
 )
 
-from utils.enum import (
-    Base,
-    ColumnMeshPK,
-    ColumnMeshHash,
-    ColumnMesh,
-    ColumnCachePK,
-    Status,
-    ColumnDelta,
-)
+# from utils.enum import (
+#     Base,
+#     ColumnMeshPK,
+#     ColumnMeshHash,
+#     ColumnMesh,
+#     ColumnCachePK,
+#     Status,
+#     ColumnDelta,
+# )
 
+from utils.column_definitions import Base, Status, ColumnDefinitions
 from utils.sub_modules.load import load
 
 # Configuração do logger
@@ -47,6 +48,10 @@ def transform_load(
     summary = []
 
     for base in Base:
+
+        # columns = ColumnDefinitions.get_columns(B[base].value, "primary_keys")
+        # print(*columns)
+
         logger.info(f"Iniciando transformação para a base: {base.name}")
         df_transformed = __transform_data(df_input, dict_df_cache[base], base.name)
 
@@ -77,14 +82,20 @@ def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: str) -> Data
     """
     logger.info(f"Iniciando transformação de dados para a base: {base}")
 
+    primary_keys = ColumnDefinitions.get_columns(Base[base], "primary_keys")
+    hash_columns = ColumnDefinitions.get_columns(Base[base], "hash_columns")
+    mesh_columns = ColumnDefinitions.get_columns(Base[base], "mesh_columns")
+    cache_columns = ColumnDefinitions.get_columns(Base[base], "cache_columns")
+    delta_columns = ColumnDefinitions.get_columns(Base[base], "delta_columns")
+
     # Aplicar regras específicas da base
     df_mesh = __apply_base_specific_rules(df_mesh, base)
 
     # Preparar dados Mesh
-    df_mesh = __prepare_mesh_data(df_mesh, base)
+    df_mesh = __prepare_mesh_data(df_mesh, primary_keys, hash_columns, mesh_columns)
 
     # Preparar dados Cache
-    df_cache = __prepare_cache_data(df_cache, base)
+    df_cache = __prepare_cache_data(df_cache, cache_columns)
 
     logger.info("Realizando join entre Mesh e Cache")
 
@@ -95,7 +106,7 @@ def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: str) -> Data
         .withColumns(__coalesce_columns(base))
         .filter(col(Status.col_name()).isNotNull())
         .withColumn("data_hora_processamento", current_timestamp())
-        .select(*ColumnDelta[base].value)
+        .select(*delta_columns)
     )
 
 
@@ -113,29 +124,31 @@ def __apply_base_specific_rules(df_mesh: DataFrame, base: str) -> DataFrame:
 
 
 # -------------------------------------------------------------------------------------- #
-def __prepare_mesh_data(df_mesh: DataFrame, base: str) -> DataFrame:
+def __prepare_mesh_data(
+    df_mesh: DataFrame, primary_keys, hash_columns, mesh_columns
+) -> DataFrame:
     """Prepara o DataFrame Mesh: remove duplicados, adiciona hash e primary key."""
     return (
-        df_mesh.dropDuplicates(ColumnMeshPK[base].value)
-        .withColumns(__mesh_key_columns(base))
-        .select(*ColumnMesh[base].value, "mesh_hash", "primary_key")
+        df_mesh.dropDuplicates(primary_keys)
+        .withColumns(__mesh_key_columns(primary_keys, hash_columns))
+        .select(*mesh_columns, "mesh_hash", "primary_key")
     )
 
 
 # -------------------------------------------------------------------------------------- #
-def __prepare_cache_data(df_cache: DataFrame, base: str) -> DataFrame:
+def __prepare_cache_data(df_cache: DataFrame, cache_columns) -> DataFrame:
     """Prepara o DataFrame Cache: renomeia hash e adiciona primary key."""
     return df_cache.withColumnRenamed("hash", "cache_hash").withColumn(
-        "primary_key", concat(*ColumnCachePK[base].value)
+        "primary_key", concat(*cache_columns)
     )
 
 
 # -------------------------------------------------------------------------------------- #
-def __mesh_key_columns(base: str) -> Dict:
+def __mesh_key_columns(primary_keys, hash_columns) -> Dict:
     """Gera as colunas hash e primary key para a base Mesh."""
     return {
-        "mesh_hash": sha2(concat(*ColumnMeshHash[base].value), 256),
-        "primary_key": concat(*ColumnMeshPK[base].value),
+        "mesh_hash": sha2(concat(*hash_columns), 256),
+        "primary_key": concat(*primary_keys),
     }
 
 

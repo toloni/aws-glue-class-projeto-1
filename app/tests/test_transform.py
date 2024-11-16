@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 from utils.sub_modules.transform import transform_load
-from utils.enum import Base
+from utils.column_definitions import Base
 from tests.test_transform_data_cnpj9 import __cache_data as cache_cnpj9
 from tests.test_transform_data_cnpj14 import __cache_data as cache_cnpj14
 from tests.test_transform_data_carteira import __cache_data as cache_carteira

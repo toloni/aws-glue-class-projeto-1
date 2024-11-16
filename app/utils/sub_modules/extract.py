@@ -1,13 +1,13 @@
 import logging
 from pyspark.sql import DataFrame
-from utils.enum import (
+from utils.column_definitions import (
     Base,
 )
 
 # Configuração do logger
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
