@@ -40,7 +40,7 @@ def transform_load(
     for base in Base:
 
         logger.info(f"Iniciando transformação para a base: {base.name}")
-        df_transformed = __transform_data(df_input, dict_df_cache[base], base.name)
+        df_transformed = __transform_data(df_input, dict_df_cache[base], base)
 
         output_path = output_path_cache_dict[base]
         logger.info(f"Carregando base transformada para o caminho: {output_path}")
@@ -56,7 +56,7 @@ def transform_load(
 
 
 # -------------------------------------------------------------------------------------- #
-def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: str) -> DataFrame:
+def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: Base) -> DataFrame:
     """Transforma dados das bases Mesh e Cache, aplicando filtros, joins e colunas derivadas.
 
     Args:
@@ -67,13 +67,13 @@ def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: str) -> Data
     Returns:
         DataFrame: DataFrame transformado com base nas regras definidas.
     """
-    logger.info(f"Iniciando transformação de dados para a base: {base}")
+    logger.info(f"Iniciando transformação de dados para a base: {base.name}")
 
-    primary_keys = ColumnDefinitions.get_columns(Base[base], "primary_keys")
-    hash_columns = ColumnDefinitions.get_columns(Base[base], "hash_columns")
-    mesh_columns = ColumnDefinitions.get_columns(Base[base], "mesh_columns")
-    cache_columns = ColumnDefinitions.get_columns(Base[base], "cache_columns")
-    delta_columns = ColumnDefinitions.get_columns(Base[base], "delta_columns")
+    primary_keys = ColumnDefinitions.get_columns(base, "primary_keys")
+    hash_columns = ColumnDefinitions.get_columns(base, "hash_columns")
+    mesh_columns = ColumnDefinitions.get_columns(base, "mesh_columns")
+    cache_columns = ColumnDefinitions.get_columns(base, "cache_columns")
+    delta_columns = ColumnDefinitions.get_columns(base, "delta_columns")
 
     # Aplicar regras específicas da base
     df_mesh = __apply_base_specific_rules(df_mesh, base)
@@ -98,11 +98,11 @@ def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: str) -> Data
 
 
 # -------------------------------------------------------------------------------------- #
-def __apply_base_specific_rules(df_mesh: DataFrame, base: str) -> DataFrame:
+def __apply_base_specific_rules(df_mesh: DataFrame, base: Base) -> DataFrame:
     """Aplica regras específicas para cada base."""
-    if base == Base.CNPJ9.name:
+    if base == Base.CNPJ9:
         df_mesh = df_mesh.filter(col("num_cpfcnpj14").substr(-6, 6).contains("0001"))
-    elif base == Base.CONTA.name:
+    elif base == Base.CONTA:
         df_mesh = df_mesh.withColumn(
             "contadac",
             concat("num_conta", "num_conta_dac"),
@@ -146,7 +146,7 @@ def __when_status() -> Dict:
 
 
 # -------------------------------------------------------------------------------------- #
-def __coalesce_columns(base: str) -> Dict:
+def __coalesce_columns(base: Base) -> Dict:
     """Gera um dicionário de colunas coalescidas com base no tipo especificado.
 
     Args:
@@ -156,7 +156,7 @@ def __coalesce_columns(base: str) -> Dict:
         Dict: Dicionário com as colunas coalescidas.
     """
     base_mappings = {
-        Base.CNPJ9.name: {
+        Base.CNPJ9: {
             "num_cpfcnpj": coalesce(col("num_cpfcnpj"), col("numerocnpj9")),
             "des_nome_cliente_razao_social": coalesce(
                 col("des_nome_cliente_razao_social"), col("nome")
@@ -165,12 +165,12 @@ def __coalesce_columns(base: str) -> Dict:
                 col("id_chave_cliente"), col("empresaprincipalid")
             ),
         },
-        Base.CNPJ14.name: {
+        Base.CNPJ14: {
             "id_chave_cliente": coalesce(col("id_chave_cliente"), col("id")),
             "num_cpfcnpj14": coalesce(col("num_cpfcnpj14"), col("cnpj")),
             "num_cpfcnpj": coalesce(col("num_cpfcnpj"), col("cnpj9")),
         },
-        Base.CARTEIRA.name: {
+        Base.CARTEIRA: {
             "cod_hierarquia_gq_segmento": coalesce(
                 col("cod_hierarquia_gq_segmento"), col("segmento")
             ),
@@ -181,7 +181,7 @@ def __coalesce_columns(base: str) -> Dict:
                 col("cod_hierarquia_gerente"), col("numero")
             ),
         },
-        Base.CONTA.name: {
+        Base.CONTA: {
             "num_agencia": coalesce(col("num_agencia"), col("agencia")),
             "numeroconta": coalesce(col("contadac"), col("numeroconta")),
         },

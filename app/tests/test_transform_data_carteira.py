@@ -2,6 +2,7 @@ import pytest
 from pyspark.sql import SparkSession, Row, DataFrame
 
 from utils.sub_modules.transform import __transform_data
+from utils.column_definitions import Base
 
 
 @pytest.fixture(scope="module")
@@ -13,8 +14,7 @@ def test_transform(spark):
     df_mesh = __mesh_data(spark)
     df_cache = __cache_data(spark)
 
-    base = "CARTEIRA"
-    df_atual = __transform_data(df_mesh, df_cache, base)
+    df_atual = __transform_data(df_mesh, df_cache, Base.CARTEIRA)
     df_expected = __expected_data(spark)
 
     df_atual_row = {}
