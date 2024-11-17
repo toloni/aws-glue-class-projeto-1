@@ -19,48 +19,54 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# # # Local Param # # # #
+def getResolvedOptions(args, params):
+    """Transforma argumentos do tipo --CHAVE VALOR em um dicionário."""
+    params = {}
+    i = 1  # Ignorar sys.argv[0], que é o nome do script
+    while i < len(args):
+        if args[i].startswith("--"):
+            key = args[i][2:]  # Remove os dois traços '--'
+            if i + 1 < len(args) and not args[i + 1].startswith("--"):
+                params[key] = args[i + 1]
+                i += 2  # Avança para o próximo par
+            else:
+                params[key] = None  # Caso a chave não tenha valor
+                i += 1
+        else:
+            i += 1
+    return params
+
+
+# # #  # # #  # # #
+
+
 # ===================================================================================== #
 #                              -------=   MAIN   =-------                               #
 # ===================================================================================== #
 def main():
 
     try:
-        # # #
-        # args = getResolvedOptions(
-        #     sys.argv,
-        #     [
-        #         "JOB_NAME",
-        #         "INPUT_MESH_DB_TABLE",
-        #         "INPUT_S3_PATH_CACHE_CNPJ9",
-        #         "INPUT_S3_PATH_CACHE_CNPJ14",
-        #         "INPUT_S3_PATH_CACHE_CARTEIRA",
-        #         "INPUT_S3_PATH_CACHE_CONTA",
-        #         "OUTPUT_S3_PATH_DELTA_CNPJ9",
-        #         "OUTPUT_S3_PATH_DELTA_CNPJ14",
-        #         "OUTPUT_S3_PATH_DELTA_CARTEIRA",
-        #         "OUTPUT_S3_PATH_DELTA_CONTA",
-        #     ],
-        # )
-        # # #
-        args = {
-            "JOB_NAME": "LocalJob",
-            "JOB_ENVIRONMENT": "dev",
-            "PARAM_BASES_TO_PROCESS": "CNPJ9,CNPJ14,CARTEIRA,CONTA",
-            "INPUT_MESH_DB_TABLE": "data//input//cliente.csv",
-            "INPUT_S3_PATH_CACHE_CNPJ9": "data//input//cache_cnpj9.csv",
-            "INPUT_S3_PATH_CACHE_CNPJ14": "data//input//cache_cnpj14.csv",
-            "INPUT_S3_PATH_CACHE_CARTEIRA": "data//input//cache_carteira.csv",
-            "INPUT_S3_PATH_CACHE_CONTA": "data//input//cache_conta.csv",
-            "OUTPUT_S3_PATH_DELTA_CNPJ9": "data//output//delta_cnpj9",
-            "OUTPUT_S3_PATH_DELTA_CNPJ14": "data//output//delta_cnpj14",
-            "OUTPUT_S3_PATH_DELTA_CARTEIRA": "data//output//delta_carteira",
-            "OUTPUT_S3_PATH_DELTA_CONTA": "data//output//delta_conta",
-        }
-        # # #
+        args = getResolvedOptions(
+            sys.argv,
+            [
+                "JOB_NAME",
+                "JOB_ENVIRONMENT",
+                "PARAM_BASES_TO_PROCESS",  #: "CNPJ9,CNPJ14,CARTEIRA,CONTA",
+                "INPUT_MESH_DB_TABLE",
+                "INPUT_S3_PATH_CACHE_CNPJ9",
+                "INPUT_S3_PATH_CACHE_CNPJ14",
+                "INPUT_S3_PATH_CACHE_CARTEIRA",
+                "INPUT_S3_PATH_CACHE_CONTA",
+                "OUTPUT_S3_PATH_DELTA_CNPJ9",
+                "OUTPUT_S3_PATH_DELTA_CNPJ14",
+                "OUTPUT_S3_PATH_DELTA_CARTEIRA",
+                "OUTPUT_S3_PATH_DELTA_CONTA",
+            ],
+        )
 
         logger.info(f"Ambiente de execução: {args['JOB_ENVIRONMENT']}")
         valid_param_env(args)
-
         logger.info("Inicializando contexto do Spark e Glue")
         # # #
         # sc = SparkContext()
@@ -74,18 +80,16 @@ def main():
             .appName("Encarteiramento Delta")
             .getOrCreate()
         )
+        glueContext = None
         # # #
 
         logger.info(f"Job iniciado: {args['JOB_NAME']}")
         logger.info(f"Bases para serem processadas: {args['PARAM_BASES_TO_PROCESS']}")
         args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(args)
 
-        print("FIM")
-        return
-
         # Extract
         logger.info("Iniciando etapa de extração")
-        df_input_mesh, input_base_cache_dict = extract(args, spark)
+        df_input_mesh, input_base_cache_dict = extract(args, glueContext, spark)
 
         # Transform >> Load
         logger.info("Iniciando etapa de transformação e carregamento")

@@ -60,7 +60,7 @@ def main():
 
         # Extract
         logger.info("Iniciando etapa de extração")
-        df_input_mesh, input_base_cache_dict = extract(args, glueContext)
+        df_input_mesh, input_base_cache_dict = extract(args, glueContext, spark)
 
         # Transform >> Load
         logger.info("Iniciando etapa de transformação e carregamento")

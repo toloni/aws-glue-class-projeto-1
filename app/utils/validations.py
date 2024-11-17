@@ -29,7 +29,7 @@ def valid_param_env(args: List):
     try:
         env = args["JOB_ENVIRONMENT"]
 
-        if env not in ["dev", "hom", "prod"]:
+        if env not in ["local", "dev", "hom", "prod"]:
             raise ValueError(f"Ambiente com o nome '{env}' do Parâmetro é inválida.")
 
         logger.info(f"Ambiente de execução {env} válido.")

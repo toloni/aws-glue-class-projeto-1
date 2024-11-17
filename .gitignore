@@ -4,7 +4,6 @@ htmlcov
 .pytest_cache
 data/notebook
 data/output
-**cache**
 app/tests/result.txt
 .DS_Store
 .app*
