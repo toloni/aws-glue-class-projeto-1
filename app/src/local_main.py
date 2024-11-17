@@ -44,6 +44,7 @@ def main():
         # # #
         args = {
             "JOB_NAME": "LocalJob",
+            "JOB_ENVIRONMENT": "dev",
             "PARAM_BASES_TO_PROCESS": "CNPJ9,CNPJ14,CARTEIRA,CONTA",
             "INPUT_MESH_DB_TABLE": "data//input//cliente.csv",
             "INPUT_S3_PATH_CACHE_CNPJ9": "data//input//cache_cnpj9.csv",

@@ -30,6 +30,7 @@ def main():
             sys.argv,
             [
                 "JOB_NAME",
+                "JOB_ENVIRONMENT",
                 "PARAM_BASES_TO_PROCESS",  #: "CNPJ9,CNPJ14,CARTEIRA,CONTA",
                 "INPUT_MESH_DB_TABLE",
                 "INPUT_S3_PATH_CACHE_CNPJ9",

@@ -12,80 +12,114 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# # ===================================================================================== #
-# #                             -------=  EXTRACT   =-------                             #
-# # ===================================================================================== #
-# def extract(args, glueContext):
+# ===================================================================================== #
+#                             -------=  EXTRACT   =-------                              #
+# ===================================================================================== #
+def extract(args, glueContext):
+    banco_de_dados, tabela = args["INPUT_MESH_DB_TABLE"].split(".")
+    logger.info(f"Lendo a última partição do DataMesh: {banco_de_dados}.{tabela}")
 
-#     input_db_table = args["INPUT_MESH_DB_TABLE"].split(".")
-#     banco_de_dados = input_db_table[0]
-#     tabela = input_db_table[1]
+    is_env_dev = (
+        args["JOB_ENVIRONMENT"].lower == "dev" or args["JOB_ENVIRONMENT"].lower == "hom"
+    )
 
-#     logger.info(f"Lendo a última partição do DataMesh: {input_db_table}")
-#     df_input_mesh = __get_last_partition_mesh(banco_de_dados, tabela, glueContext)
+    # Dev Hom - Nao Particionada
+    # Prod - Base Particionada
+    df_input_mesh = (
+        __get_mesh_dev_hom(banco_de_dados, tabela, glueContext)
+        if is_env_dev
+        else __get_last_partition_mesh(banco_de_dados, tabela, glueContext)
+    )
 
-#     input_base_cache_dict = {}
-#     input_path_cache_dict = {
-#         BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
-#         BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
-#         BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
-#         BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
-#     }
+    if df_input_mesh is None:
+        raise ValueError("Base Mesh Inválida.")
 
-#     bases_to_process = args["PARAM_BASES_TO_PROCESS"]
+    input_base_cache_dict = {}
+    input_path_cache_dict = __build_input_path_cache_dict(args)
 
-#     for base_param in bases_to_process:
-#         base = BaseEnum[base_param]
+    bases_to_process = args["PARAM_BASES_TO_PROCESS"]
 
-#         logger.info(
-#             f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
-#         )
-#         input_base_cache_dict[base] = __get_input_cache(
-#             input_path_cache_dict[base], glueContext
-#         )
+    for base_param in bases_to_process:
+        base = BaseEnum[base_param]
+        logger.info(
+            f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
+        )
 
-#         logger.info(
-#             f"Total de registros na base {base.name}: {input_base_cache_dict[base].count()}"
-#         )
+        input_base_cache_dict[base] = __get_input_cache(
+            input_path_cache_dict[base], glueContext
+        )
 
-#     return df_input_mesh, input_base_cache_dict
+        logger.info(
+            f"Total de registros na base {base.name}: {input_base_cache_dict[base].count()}"
+        )
 
-
-# # -------------------------------------------------------------------------------------- #
-# def __get_last_partition_mesh(banco_de_dados, tabela, glueContext) -> DataFrame:
-#     logger.info(f"Lendo dados de: {banco_de_dados}.{tabela}")
-
-#     try:
-#         dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
-#             database=banco_de_dados, table_name=tabela
-#         )
-
-#         return dynamic_frame.toDF()
-
-#     except Exception as e:
-#         logger.error(
-#             f"Erro ao ler data catalog db:{banco_de_dados}, table: {tabela}: {e}"
-#         )
-#         raise
+    return df_input_mesh, input_base_cache_dict
 
 
-# # -------------------------------------------------------------------------------------- #
-# def __get_input_cache(s3_path, glueContext) -> DataFrame:
-#     logger.info(f"Lendo cache de entrada do caminho: {s3_path}")
+# -------------------------------------------------------------------------------------- #
+def __build_input_path_cache_dict(args):
+    """Build the input path cache dictionary from the arguments."""
+    return {
+        BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
+        BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
+        BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
+        BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
+    }
 
-#     try:
-#         dynamic_frame = glueContext.create_dynamic_frame.from_options(
-#             connection_type="s3",
-#             connection_options={"paths": [s3_path]},
-#             format="csv",
-#             format_options={"withHeader": True, "separator": ",", "quoteChar": '"'},
-#         )
 
-#         return dynamic_frame.toDF()
+# -------------------------------------------------------------------------------------- #
+def __get_last_partition_mesh(banco_de_dados, tabela, glueContext) -> DataFrame:
+    logger.info(f"Lendo dados de: {banco_de_dados}.{tabela}")
 
-#     except Exception as e:
-#         logger.error(f"Erro ao ler o cache de entrada do caminho {s3_path}: {e}")
-#         raise
+    try:
+        dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
+            database=banco_de_dados, table_name=tabela
+        )
+
+        return dynamic_frame.toDF()
+
+    except Exception as e:
+        logger.error(
+            f"Erro ao ler data catalog db:{banco_de_dados}, table: {tabela}: {e}"
+        )
+        raise
+
+
+# -------------------------------------------------------------------------------------- #
+def __get_mesh_dev_hom(banco_de_dados, tabela, glueContext) -> DataFrame:
+    logger.info(f"Lendo dados de: {banco_de_dados}.{tabela}")
+
+    try:
+        dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
+            database=banco_de_dados, table_name=tabela
+        )
+
+        return dynamic_frame.toDF()
+
+    except Exception as e:
+        logger.error(
+            f"Erro ao ler data catalog db:{banco_de_dados}, table: {tabela}: {e}"
+        )
+        return None
+
+
+# -------------------------------------------------------------------------------------- #
+def __get_input_cache(s3_path, glueContext) -> DataFrame:
+    logger.info(f"Lendo cache de entrada do caminho: {s3_path}")
+
+    try:
+        dynamic_frame = glueContext.create_dynamic_frame.from_options(
+            connection_type="s3",
+            connection_options={"paths": [s3_path]},
+            format="csv",
+            format_options={"withHeader": True, "separator": ",", "quoteChar": '"'},
+        )
+
+        return dynamic_frame.toDF()
+
+    except Exception as e:
+        logger.error(f"Erro ao ler o cache de entrada do caminho {s3_path}: {e}")
+        raise
 
 
 # Cache Parquet
@@ -133,51 +167,51 @@ logger = logging.getLogger(__name__)
 #         return None
 
 
-# ===================================================================================== #
-#  local test                  -------=  EXTRACT   =-------                             #
-# ===================================================================================== #
-def extract(args, spark):
+# # ===================================================================================== #
+# #  local test                  -------=  EXTRACT   =-------                             #
+# # ===================================================================================== #
+# def extract(args, spark):
 
-    input_db_table = args["INPUT_MESH_DB_TABLE"]
-    logger.info(f"Lendo a última partição do DataMesh: {input_db_table}")
-    df_input_mesh = __get_last_partition_mesh(input_db_table, spark)
+#     input_db_table = args["INPUT_MESH_DB_TABLE"]
+#     logger.info(f"Lendo a última partição do DataMesh: {input_db_table}")
+#     df_input_mesh = __get_last_partition_mesh(input_db_table, spark)
 
-    input_base_cache_dict = {}
-    input_path_cache_dict = {
-        BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
-        BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
-        BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
-        BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
-    }
+#     input_base_cache_dict = {}
+#     input_path_cache_dict = {
+#         BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
+#         BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
+#         BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
+#         BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
+#     }
 
-    bases_to_process = args["PARAM_BASES_TO_PROCESS"]
+#     bases_to_process = args["PARAM_BASES_TO_PROCESS"]
 
-    for base_param in bases_to_process:
-        base = BaseEnum[base_param]
+#     for base_param in bases_to_process:
+#         base = BaseEnum[base_param]
 
-        logger.info(
-            f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
-        )
-        input_base_cache_dict[base] = __get_input_cache(
-            input_path_cache_dict[base], spark
-        )
+#         logger.info(
+#             f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
+#         )
+#         input_base_cache_dict[base] = __get_input_cache(
+#             input_path_cache_dict[base], spark
+#         )
 
-        logger.info(
-            f"Total de registros na base {base.name}: {input_base_cache_dict[base].count()}"
-        )
+#         logger.info(
+#             f"Total de registros na base {base.name}: {input_base_cache_dict[base].count()}"
+#         )
 
-    return df_input_mesh, input_base_cache_dict
-
-
-# -------------------------------------------------------------------------------------- #
-def __get_last_partition_mesh(path_mesh, spark) -> DataFrame:
-    logger.info(f"Lendo dados do caminho: {path_mesh}")
-    df = spark.read.csv(path_mesh, header=True)
-    return df
+#     return df_input_mesh, input_base_cache_dict
 
 
-# -------------------------------------------------------------------------------------- #
-def __get_input_cache(path_mesh, spark) -> DataFrame:
-    logger.info(f"Lendo cache de entrada do caminho: {path_mesh}")
-    df = spark.read.csv(path_mesh, header=True)
-    return df
+# # -------------------------------------------------------------------------------------- #
+# def __get_last_partition_mesh(path_mesh, spark) -> DataFrame:
+#     logger.info(f"Lendo dados do caminho: {path_mesh}")
+#     df = spark.read.csv(path_mesh, header=True)
+#     return df
+
+
+# # -------------------------------------------------------------------------------------- #
+# def __get_input_cache(path_mesh, spark) -> DataFrame:
+#     logger.info(f"Lendo cache de entrada do caminho: {path_mesh}")
+#     df = spark.read.csv(path_mesh, header=True)
+#     return df
