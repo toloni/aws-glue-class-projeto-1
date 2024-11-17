@@ -1,7 +1,7 @@
 import logging
 from pyspark.sql import DataFrame
 from utils.column_definitions import (
-    Base,
+    Base as BaseEnum,
 )
 
 # Configuração do logger
@@ -26,13 +26,17 @@ logger = logging.getLogger(__name__)
 
 #     input_base_cache_dict = {}
 #     input_path_cache_dict = {
-#         Base.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
-#         Base.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
-#         Base.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
-#         Base.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
+#         BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
+#         BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
+#         BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
+#         BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
 #     }
 
-#     for base in Base:
+#     bases_to_process = args["PARAM_BASES_TO_PROCESS"]
+
+#     for base_param in bases_to_process:
+#         base = BaseEnum[base_param]
+
 #         logger.info(
 #             f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
 #         )
@@ -118,13 +122,17 @@ def extract(args, spark):
 
     input_base_cache_dict = {}
     input_path_cache_dict = {
-        Base.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
-        Base.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
-        Base.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
-        Base.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
+        BaseEnum.CNPJ9: args["INPUT_S3_PATH_CACHE_CNPJ9"],
+        BaseEnum.CNPJ14: args["INPUT_S3_PATH_CACHE_CNPJ14"],
+        BaseEnum.CARTEIRA: args["INPUT_S3_PATH_CACHE_CARTEIRA"],
+        BaseEnum.CONTA: args["INPUT_S3_PATH_CACHE_CONTA"],
     }
 
-    for base in Base:
+    bases_to_process = args["PARAM_BASES_TO_PROCESS"]
+
+    for base_param in bases_to_process:
+        base = BaseEnum[base_param]
+
         logger.info(
             f"Carregando cache para a base {base.name} do caminho {input_path_cache_dict[base]}"
         )

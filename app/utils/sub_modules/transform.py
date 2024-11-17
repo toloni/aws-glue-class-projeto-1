@@ -11,7 +11,7 @@ from pyspark.sql.functions import (
     current_timestamp,
 )
 
-from utils.column_definitions import Base, Status, ColumnDefinitions
+from utils.column_definitions import Base as BaseEnum, Status, ColumnDefinitions
 from utils.sub_modules.load import load
 
 # Configuração do logger
@@ -29,15 +29,18 @@ def transform_load(
     df_input: DataFrame, dict_df_cache: Dict[str, DataFrame], args: Dict
 ):
     output_path_cache_dict = {
-        Base.CNPJ9: args["OUTPUT_S3_PATH_DELTA_CNPJ9"],
-        Base.CNPJ14: args["OUTPUT_S3_PATH_DELTA_CNPJ14"],
-        Base.CARTEIRA: args["OUTPUT_S3_PATH_DELTA_CARTEIRA"],
-        Base.CONTA: args["OUTPUT_S3_PATH_DELTA_CONTA"],
+        BaseEnum.CNPJ9: args["OUTPUT_S3_PATH_DELTA_CNPJ9"],
+        BaseEnum.CNPJ14: args["OUTPUT_S3_PATH_DELTA_CNPJ14"],
+        BaseEnum.CARTEIRA: args["OUTPUT_S3_PATH_DELTA_CARTEIRA"],
+        BaseEnum.CONTA: args["OUTPUT_S3_PATH_DELTA_CONTA"],
     }
 
     summary = []
 
-    for base in Base:
+    bases_to_process = args["PARAM_BASES_TO_PROCESS"]
+
+    for base_param in bases_to_process:
+        base = BaseEnum[base_param]
 
         logger.info(f"Iniciando transformação para a base: {base.name}")
         df_transformed = __transform_data(df_input, dict_df_cache[base], base)
@@ -46,17 +49,27 @@ def transform_load(
         logger.info(f"Carregando base transformada para o caminho: {output_path}")
         load(df_transformed, output_path)
 
+        # Contar registros totais por status
+        status_count = df_transformed.groupBy("status").count().collect()
+
+        # Adicionar contagem por status ao resumo
+        status_summary = {status: count for status, count in status_count}
+        summary.append(f"{base.name}: {status_summary}")
+
+        # Contagem total de registros processados
         record_count = df_transformed.count()
-        summary.append(f"{base.name}: {record_count} registros processados.")
         logger.info(f"Base {base.name} processada com {record_count} registros.")
 
+    # Exibindo resumo no final
     logger.info("Resumo do processamento:")
     for item in summary:
         logger.info(item)
 
 
 # -------------------------------------------------------------------------------------- #
-def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: Base) -> DataFrame:
+def __transform_data(
+    df_mesh: DataFrame, df_cache: DataFrame, base: BaseEnum
+) -> DataFrame:
     """Transforma dados das bases Mesh e Cache, aplicando filtros, joins e colunas derivadas.
 
     Args:
@@ -98,11 +111,11 @@ def __transform_data(df_mesh: DataFrame, df_cache: DataFrame, base: Base) -> Dat
 
 
 # -------------------------------------------------------------------------------------- #
-def __apply_base_specific_rules(df_mesh: DataFrame, base: Base) -> DataFrame:
+def __apply_base_specific_rules(df_mesh: DataFrame, base: BaseEnum) -> DataFrame:
     """Aplica regras específicas para cada base."""
-    if base == Base.CNPJ9:
+    if base == BaseEnum.CNPJ9:
         df_mesh = df_mesh.filter(col("num_cpfcnpj14").substr(-6, 6).contains("0001"))
-    elif base == Base.CONTA:
+    elif base == BaseEnum.CONTA:
         df_mesh = df_mesh.withColumn(
             "contadac",
             concat("num_conta", "num_conta_dac"),
@@ -146,7 +159,7 @@ def __when_status() -> Dict:
 
 
 # -------------------------------------------------------------------------------------- #
-def __coalesce_columns(base: Base) -> Dict:
+def __coalesce_columns(base: BaseEnum) -> Dict:
     """Gera um dicionário de colunas coalescidas com base no tipo especificado.
 
     Args:
@@ -156,7 +169,7 @@ def __coalesce_columns(base: Base) -> Dict:
         Dict: Dicionário com as colunas coalescidas.
     """
     base_mappings = {
-        Base.CNPJ9: {
+        BaseEnum.CNPJ9: {
             "num_cpfcnpj": coalesce(col("num_cpfcnpj"), col("numerocnpj9")),
             "des_nome_cliente_razao_social": coalesce(
                 col("des_nome_cliente_razao_social"), col("nome")
@@ -165,12 +178,12 @@ def __coalesce_columns(base: Base) -> Dict:
                 col("id_chave_cliente"), col("empresaprincipalid")
             ),
         },
-        Base.CNPJ14: {
+        BaseEnum.CNPJ14: {
             "id_chave_cliente": coalesce(col("id_chave_cliente"), col("id")),
             "num_cpfcnpj14": coalesce(col("num_cpfcnpj14"), col("cnpj")),
             "num_cpfcnpj": coalesce(col("num_cpfcnpj"), col("cnpj9")),
         },
-        Base.CARTEIRA: {
+        BaseEnum.CARTEIRA: {
             "cod_hierarquia_gq_segmento": coalesce(
                 col("cod_hierarquia_gq_segmento"), col("segmento")
             ),
@@ -181,7 +194,7 @@ def __coalesce_columns(base: Base) -> Dict:
                 col("cod_hierarquia_gerente"), col("numero")
             ),
         },
-        Base.CONTA: {
+        BaseEnum.CONTA: {
             "num_agencia": coalesce(col("num_agencia"), col("agencia")),
             "numeroconta": coalesce(col("contadac"), col("numeroconta")),
         },

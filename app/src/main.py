@@ -8,6 +8,7 @@ from pyspark.sql import DataFrame, SparkSession
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
+from app.utils.validations import valid_param_bases
 from utils.sub_modules.extract import extract
 from utils.sub_modules.transform import transform_load
 
@@ -29,6 +30,7 @@ def main():
             sys.argv,
             [
                 "JOB_NAME",
+                "PARAM_BASES_TO_PROCESS",  #: "CNPJ9,CNPJ14,CARTEIRA,CONTA",
                 "INPUT_MESH_DB_TABLE",
                 "INPUT_S3_PATH_CACHE_CNPJ9",
                 "INPUT_S3_PATH_CACHE_CNPJ14",
@@ -49,7 +51,10 @@ def main():
         job.init(args["JOB_NAME"], args)
 
         logger.info(f"Job iniciado: {args['JOB_NAME']}")
-
+        logger.info(f"Bases para serem processadas: {args['PARAM_BASES_TO_PROCESS']}")
+        args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(
+            args["PARAM_BASES_TO_PROCESS"]
+        )
         # Extract
         logger.info("Iniciando etapa de extração")
         df_input_mesh, input_base_cache_dict = extract(args, glueContext)

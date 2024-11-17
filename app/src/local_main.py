@@ -7,6 +7,7 @@ import logging
 from typing import Dict
 from pyspark.sql import SparkSession
 
+from utils.validations import valid_param_bases
 from utils.sub_modules.extract import extract
 from utils.sub_modules.transform import transform_load
 
@@ -43,6 +44,7 @@ def main():
         # # #
         args = {
             "JOB_NAME": "LocalJob",
+            "PARAM_BASES_TO_PROCESS": "CNPJ9,CNPJ14,CARTEIRA,CONTA",
             "INPUT_MESH_DB_TABLE": "data//input//cliente.csv",
             "INPUT_S3_PATH_CACHE_CNPJ9": "data//input//cache_cnpj9.csv",
             "INPUT_S3_PATH_CACHE_CNPJ14": "data//input//cache_cnpj14.csv",
@@ -71,6 +73,10 @@ def main():
         # # #
 
         logger.info(f"Job iniciado: {args['JOB_NAME']}")
+        logger.info(f"Bases para serem processadas: {args['PARAM_BASES_TO_PROCESS']}")
+        args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(
+            args["PARAM_BASES_TO_PROCESS"]
+        )
 
         # Extract
         logger.info("Iniciando etapa de extração")
@@ -88,7 +94,7 @@ def main():
         logger.info("Job concluído com sucesso!")
 
     except Exception as e:
-        print(f"Erro na orquestração dos trabalhos: {e}")
+        print(f"Erro na execução do Job, erro: {e}")
 
 
 if __name__ == "__main__":

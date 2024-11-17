@@ -89,6 +89,7 @@ def dict_df_cache(spark):
 def args():
     """Argumentos simulados para a função."""
     return {
+        "PARAM_BASES_TO_PROCESS": "CNPJ9,CNPJ14,CARTEIRA,CONTA",
         "OUTPUT_S3_PATH_DELTA_CNPJ9": "s3://fake-bucket/delta/cnpj9",
         "OUTPUT_S3_PATH_DELTA_CNPJ14": "s3://fake-bucket/delta/cnpj14",
         "OUTPUT_S3_PATH_DELTA_CARTEIRA": "s3://fake-bucket/delta/carteira",
@@ -104,7 +105,7 @@ def test_transform_load(
     # Mock do logger
     mock_logger = MagicMock()
     mock_get_logger.return_value = mock_logger
-
+    args["PARAM_BASES_TO_PROCESS"] = args["PARAM_BASES_TO_PROCESS"].split(",")
     # Chamar a função com os dados simulados
     transform_load(df_input, dict_df_cache, args)
 
