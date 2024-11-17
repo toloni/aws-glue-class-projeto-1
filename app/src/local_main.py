@@ -87,13 +87,17 @@ def main():
         logger.info(f"Bases para serem processadas: {args['PARAM_BASES_TO_PROCESS']}")
         args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(args)
 
-        # Extract
         logger.info("Iniciando etapa de extração")
         df_input_mesh, input_base_cache_dict = extract(args, glueContext, spark)
 
-        # Transform >> Load
+        logger.info("Persistindo mesh em memória")
+        df_input_mesh_cached = df_input_mesh.persist()
+
         logger.info("Iniciando etapa de transformação e carregamento")
-        transform_load(df_input_mesh, input_base_cache_dict, args)
+        transform_load(df_input_mesh_cached, input_base_cache_dict, args)
+
+        logger.info("Liberando memória")
+        df_input_mesh_cached.unpersist()
 
         logger.info("Commit do job em andamento")
         # # #
