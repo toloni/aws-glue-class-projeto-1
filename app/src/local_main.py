@@ -7,7 +7,7 @@ import logging
 from typing import Dict
 from pyspark.sql import SparkSession
 
-from utils.validations import valid_param_bases
+from utils.validations import valid_param_bases, valid_param_env
 from utils.sub_modules.extract import extract
 from utils.sub_modules.transform import transform_load
 
@@ -58,6 +58,9 @@ def main():
         }
         # # #
 
+        logger.info(f"Ambiente de execução: {args['JOB_ENVIRONMENT']}")
+        valid_param_env(args)
+
         logger.info("Inicializando contexto do Spark e Glue")
         # # #
         # sc = SparkContext()
@@ -75,9 +78,10 @@ def main():
 
         logger.info(f"Job iniciado: {args['JOB_NAME']}")
         logger.info(f"Bases para serem processadas: {args['PARAM_BASES_TO_PROCESS']}")
-        args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(
-            args["PARAM_BASES_TO_PROCESS"]
-        )
+        args["PARAM_BASES_TO_PROCESS"] = valid_param_bases(args)
+
+        print("FIM")
+        return
 
         # Extract
         logger.info("Iniciando etapa de extração")
