@@ -19,16 +19,12 @@ def extract(args, glueContext):
     banco_de_dados, tabela = args["INPUT_MESH_DB_TABLE"].split(".")
     logger.info(f"Lendo a última partição do DataMesh: {banco_de_dados}.{tabela}")
 
-    is_env_dev = (
-        args["JOB_ENVIRONMENT"].lower == "dev" or args["JOB_ENVIRONMENT"].lower == "hom"
-    )
-
     # Dev Hom - Nao Particionada
     # Prod - Base Particionada
     df_input_mesh = (
-        __get_mesh_dev_hom(banco_de_dados, tabela, glueContext)
-        if is_env_dev
-        else __get_last_partition_mesh(banco_de_dados, tabela, glueContext)
+        __get_last_partition_mesh(banco_de_dados, tabela, glueContext)
+        if (args["JOB_ENVIRONMENT"].lower == "prod")
+        else __get_mesh_dev_hom(banco_de_dados, tabela, glueContext)
     )
 
     if df_input_mesh is None:
