@@ -111,6 +111,28 @@ logger = logging.getLogger(__name__)
 #     return dynamic_frame.toDF()
 
 
+# Lendo Parquet com Spark
+#
+# from pyspark.sql import SparkSession
+
+# def __get_input_cache(s3_path: str, spark: SparkSession) -> DataFrame:
+#     """
+#     Lê um arquivo Parquet do S3 e retorna como um DataFrame do Spark.
+#     Caso ocorra algum erro, uma mensagem de erro será registrada.
+
+#     :param s3_path: Caminho no S3 do arquivo Parquet.
+#     :param spark: Instância do SparkSession.
+#     :return: DataFrame do Spark contendo os dados do arquivo, ou None em caso de erro.
+#     """
+#     try:
+#         logger.info(f"Lendo cache de entrada do caminho: {s3_path}")
+#         return spark.read.parquet(s3_path)
+
+#     except Exception as e:
+#         logger.error(f"Erro ao ler o arquivo Parquet do S3. Caminho: {s3_path}. Erro: {str(e)}")
+#         return None
+
+
 # ===================================================================================== #
 #  local test                  -------=  EXTRACT   =-------                             #
 # ===================================================================================== #
