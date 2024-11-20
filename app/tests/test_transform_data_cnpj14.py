@@ -99,6 +99,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="d1a4f2bd-6a8e-43b1-807e-91b5d2c3d8f3",
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="105",
@@ -106,6 +107,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="d1a4f2bd-6a8e-43b1-807e-91b5d2c3d8f3",
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="105",
@@ -113,6 +115,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="d1a4f2bd-6a8e-43b1-807e-91b5d2c3d8f3",
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="28",
@@ -120,6 +123,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="d69d3be2-0002-4c67-b013-fd826869ff84",
                 des_nome_cliente_razao_social="EMPRESA 28 EMPRESA 2",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
+                cod_hierarquia_plataforma="742",
             ),
         ]
     )

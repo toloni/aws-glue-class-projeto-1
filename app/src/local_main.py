@@ -62,6 +62,7 @@ def main():
                 "OUTPUT_S3_PATH_DELTA_CNPJ14",
                 "OUTPUT_S3_PATH_DELTA_CARTEIRA",
                 "OUTPUT_S3_PATH_DELTA_CONTA",
+                "RANGE_PLATAFORMAS",
             ],
         )
 

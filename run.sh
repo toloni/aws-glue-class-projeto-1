@@ -18,4 +18,5 @@ python3 app/src/local_main.py \
     --OUTPUT_S3_PATH_DELTA_CNPJ9 'data//output//delta_cnpj9' \
     --OUTPUT_S3_PATH_DELTA_CNPJ14 'data//output//delta_cnpj14' \
     --OUTPUT_S3_PATH_DELTA_CARTEIRA 'data//output//delta_carteira' \
-    --OUTPUT_S3_PATH_DELTA_CONTA 'data//output//delta_conta' 
+    --OUTPUT_S3_PATH_DELTA_CONTA 'data//output//delta_conta' \
+    --RANGE_PLATAFORMAS '0-9999'

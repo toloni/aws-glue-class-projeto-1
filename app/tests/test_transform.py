@@ -89,6 +89,7 @@ def dict_df_cache(spark):
 def args():
     """Argumentos simulados para a função."""
     return {
+        "RANGE_PLATAFORMAS": "0-9999",
         "PARAM_BASES_TO_PROCESS": "CNPJ9,CNPJ14,CARTEIRA,CONTA",
         "OUTPUT_S3_PATH_DELTA_CNPJ9": "s3://fake-bucket/delta/cnpj9",
         "OUTPUT_S3_PATH_DELTA_CNPJ14": "s3://fake-bucket/delta/cnpj14",

@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 from pyspark.sql import DataFrame
+from pyspark.sql.types import IntegerType
 from pyspark.sql.functions import (
     col,
     sha2,
@@ -37,6 +38,7 @@ def transform_load(
 
     summary = []
 
+    range_plat_dict = __range_plataformas(args)
     bases_to_process = args["PARAM_BASES_TO_PROCESS"]
 
     for base_param in bases_to_process:
@@ -47,7 +49,7 @@ def transform_load(
 
         output_path = output_path_cache_dict[base]
         logger.info(f"Carregando base transformada para o caminho: {output_path}")
-        load(df_transformed, output_path)
+        load(df_transformed, output_path, range_plat_dict)
 
         # Contar registros totais por status
         status_count = df_transformed.groupBy("status").count().collect()
@@ -64,6 +66,14 @@ def transform_load(
     logger.info("Resumo do processamento:")
     for item in summary:
         logger.info(item)
+
+
+# -------------------------------------------------------------------------------------- #
+def __range_plataformas(args: Dict) -> Dict:
+    plat_start, plat_end = args["RANGE_PLATAFORMAS"].split("-")
+    range_plat = {"start": int(plat_start), "end": int(plat_end)}
+    logger.info(f"Range Plataformas: {range_plat}")
+    return range_plat
 
 
 # -------------------------------------------------------------------------------------- #
@@ -98,15 +108,15 @@ def __transform_data(
     df_cache = __prepare_cache_data(df_cache, cache_columns)
 
     logger.info("Realizando join entre Mesh e Cache")
+    df_joined = df_mesh.join(df_cache, "primary_key", "full")
 
     # Realizar o join e aplicar transformações
     return (
-        df_mesh.join(df_cache, "primary_key", "full")
-        .withColumns(__when_status())
+        df_joined.withColumns(__when_status())
         .withColumns(__coalesce_columns(base))
         .filter(col(Status.col_name()).isNotNull())
         .withColumn("data_hora_processamento", current_timestamp())
-        .select(*delta_columns)
+        .select(*delta_columns, "plat")
     )
 
 
@@ -136,7 +146,16 @@ def __prepare_mesh_data(
                 "primary_key": concat(*primary_keys),
             }
         )
-        .select(*mesh_columns, "mesh_hash", "primary_key")
+        .select(
+            *mesh_columns,
+            "mesh_hash",
+            "primary_key",
+            col("cod_hierarquia_plataforma")
+            .alias("plat")
+            .cast(
+                IntegerType(),
+            ),
+        )
     )
 
 

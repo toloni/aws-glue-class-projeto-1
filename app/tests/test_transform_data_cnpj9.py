@@ -95,6 +95,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="00000000-0000-0000-0000-000000000001",
                 des_nome_cliente_razao_social="Sociedade Esportiva Palmeiras - ATUALIZACAO NOME",
                 des_cpfcnpj_status="CAMPEAO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="1",
@@ -102,6 +103,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="00000000-0000-0000-0002-000000000001",
                 des_nome_cliente_razao_social="Sociedade Esportiva Palmeiras - Sub 20 Juniores",
                 des_cpfcnpj_status="CAMPEAO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="2",
@@ -109,6 +111,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="00000000-0000-0000-0000-000000000002",
                 des_nome_cliente_razao_social="Clube de Regatas do Flamengo - SEM ALTERACAO",
                 des_cpfcnpj_status="CLASSIFICADO",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 num_cpfcnpj="4",
@@ -116,6 +119,7 @@ def __mesh_data(spark) -> DataFrame:
                 id_chave_cliente="00000000-0000-0000-0000-000000000004",
                 des_nome_cliente_razao_social="São Paulo Futebol Clube - INSERIDO",
                 des_cpfcnpj_status="NOVO",
+                cod_hierarquia_plataforma="742",
             ),
         ]
     )

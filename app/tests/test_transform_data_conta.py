@@ -95,6 +95,7 @@ def __mesh_data(spark) -> DataFrame:
                 num_conta="7452",
                 num_conta_dac="1",
                 des_conta_status="CONTA ATIVA",
+                cod_hierarquia_plataforma="742",
             ),
             Row(
                 des_segmentacao="RETAIL",
@@ -102,6 +103,7 @@ def __mesh_data(spark) -> DataFrame:
                 num_conta="7441",
                 num_conta_dac="8",
                 des_conta_status="CONTA BLOQUEADA",
+                cod_hierarquia_plataforma="742",
             ),
         ]
     )

@@ -1,0 +1,37 @@
+criar tab particionada athena
+
+CREATE EXTERNAL TABLE tbl_cliente_encart_2 (
+	id_chave_cliente STRING,
+	num_cpfcnpj STRING,
+	num_cpfcnpj14 STRING,
+	des_nome_cliente_razao_social STRING,
+	cod_hierarquia_gq_segmento STRING,
+	des_segmentacao STRING,
+	cod_hierarquia_plataforma STRING,
+	cod_hierarquia_gerente STRING,
+	cod_hierarquia_regiao STRING,
+	num_agencia  STRING,
+	num_conta STRING,
+	num_conta_dac STRING,
+	des_cpfcnpj_status STRING,
+	des_cpfcnpj14_status STRING,
+	des_conta_status STRING,
+	cliente_desde STRING,
+	filial STRING
+)
+PARTITIONED BY (
+	anomesdia DATE
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES (
+    'field.delim' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://tolonit-bucket/input/tbl_encart_cliente/'
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+----
+Registrar particoes
+MSCK REPAIR TABLE tbl_cliente_encart_2
+
