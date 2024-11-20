@@ -38,7 +38,7 @@ MSCK REPAIR TABLE tbl_cliente_encart_2
 
 
 ---
-ALTER TABLE cliente ADD PARTITION (date='2024-11-20') 
-LOCATION 's3://tolonit-bucket/input/cliente/date=2024-11-20/';
+ALTER TABLE cliente ADD PARTITION (anomesdia='2024-11-20') 
+LOCATION 's3://tolonit-bucket/input/cliente/anomesdia=2024-11-20/';
 
 s3://tolonit-bucket/input/tbl_encart_cliente/anomesdia=2024-11-20/
