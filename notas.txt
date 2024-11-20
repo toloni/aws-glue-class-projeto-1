@@ -35,3 +35,10 @@ TBLPROPERTIES ('skip.header.line.count'='1');
 Registrar particoes
 MSCK REPAIR TABLE tbl_cliente_encart_2
 
+
+
+---
+ALTER TABLE cliente ADD PARTITION (date='2024-11-20') 
+LOCATION 's3://tolonit-bucket/input/cliente/date=2024-11-20/';
+
+s3://tolonit-bucket/input/tbl_encart_cliente/anomesdia=2024-11-20/
