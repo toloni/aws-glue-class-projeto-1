@@ -30,7 +30,7 @@ def transform_carteira(
             df.dropDuplicates(carteira_columns)
             .withColumn(
                 "lake_hash",
-                sha2(concat(*carteira_columns), 256),
+                sha2(concat(*carteira_columns, "cod_hierarquia_regiao"), 256),
             )
             .withColumn("lake_key", concat(*carteira_columns))
         )

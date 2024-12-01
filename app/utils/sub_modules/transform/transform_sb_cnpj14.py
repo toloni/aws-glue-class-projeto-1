@@ -31,7 +31,6 @@ def transform_cnpj14(
             "lake_hash",
             sha2(
                 concat(
-                    col("id_chave_cliente"),
                     col("des_nome_cliente_razao_social"),
                     col("des_cpfcnpj14_status"),
                 ),

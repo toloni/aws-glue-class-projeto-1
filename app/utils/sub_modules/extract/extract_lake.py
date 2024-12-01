@@ -30,7 +30,3 @@ def extract_lake(args: Dict, glueContext: GlueContext) -> DataFrame:
             f"Erro ao ler data catalog db:{banco_de_dados}, table: {tabela}: {e}"
         )
         raise
-
-    # path = args["PATH_LAKE"]
-    # df = spark.read.csv(path, header=True, inferSchema=True, sep=",")
-    # return df

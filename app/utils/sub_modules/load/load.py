@@ -1,3 +1,8 @@
-def transform(df_encart_pj, df_cache_dict, base):
+from pyspark.sql import DataFrame
+from utils.enums import Base
 
+
+def load(df: DataFrame, base: Base):
+
+    df.show()
     pass
