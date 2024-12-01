@@ -10,29 +10,12 @@ def extract_cache(args: Dict, glueContext: GlueContext, base: Base):
     path_cache = build_path_cache(args)
     cache_dict = {}
 
-    if base == Base.CNPJ9:
-        cache_dict[Base.CNPJ9] = extract_cache_s3(
-            path_cache[Base.CNPJ9], glueContext=glueContext
-        )
+    # Single Bases
+    if base in [Base.CNPJ9, Base.CNPJ14, Base.CARTEIRA, Base.CONTA]:
+        cache_dict[base] = extract_cache_s3(path_cache[base], glueContext=glueContext)
         return cache_dict
 
-    elif base == Base.CNPJ14:
-        cache_dict[Base.CNPJ14] = extract_cache_s3(
-            path_cache[Base.CNPJ14], glueContext=glueContext
-        )
-        return cache_dict
-
-    elif base == Base.CARTEIRA:
-        cache_dict[Base.CARTEIRA] = extract_cache_s3(
-            path_cache[Base.CARTEIRA], glueContext=glueContext
-        )
-        return cache_dict
-
-    elif base == Base.CONTA:
-        cache_dict[Base.CONTA] = extract_cache_s3(
-            path_cache[Base.CONTA], glueContext=glueContext
-        )
-        return cache_dict
+    # Linked Bases TODO
 
     pass
 

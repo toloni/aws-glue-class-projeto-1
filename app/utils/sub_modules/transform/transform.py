@@ -39,6 +39,7 @@ class Transformer:
         Returns:
             DataFrame: DataFrame transformado.
         """
+
         if base == Base.CNPJ9:
             return transform_cnpj9(
                 df_encart_pj, df_cache_dict[Base.CNPJ9], self.status_col
