@@ -1,6 +1,7 @@
 import logging
 import time
 import boto3
+import json
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 
@@ -14,6 +15,7 @@ class ProcessingLogger:
         self.cloudwatch_client = boto3.client("logs", region_name=aws_region)
         self.sequence_token = None
         self._initialize_cloudwatch()
+        self.final_stats = {}
 
     def _initialize_cloudwatch(self):
         """
@@ -45,18 +47,34 @@ class ProcessingLogger:
         """
         Loga a quantidade de registros no DataFrame por status e armazena as estatísticas.
         """
+
         try:
             status_count = df.groupBy("status").count().collect()
             self.stats[base_name] = {
+                row["status"]: row["count"] for row in status_count
+            }
+            self.final_stats[base_name] = {
                 row["status"]: row["count"] for row in status_count
             }
             for status, count in self.stats[base_name].items():
                 log_message = (
                     f"Base: {base_name}, Status: {status}, Quantidade: {count}"
                 )
+
                 self.log_info(log_message)
+
         except Exception as e:
             self.log_error(f"Erro ao calcular estatísticas de status: {str(e)}")
+
+    def log_final_stats_json(self):
+        """
+        Loga as estatísticas finais em formato JSON.
+        """
+        try:
+            json_stats = json.dumps(self.final_stats)
+            self.log_info(f"Final stats: {json_stats}")
+        except Exception as e:
+            self.log_error(f"Erro ao logar estatísticas finais: {str(e)}")
 
     def _send_to_cloudwatch(self, message: str, level: str):
         """
