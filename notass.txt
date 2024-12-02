@@ -1,0 +1,73 @@
+!isNull(PLAT) && !isNull(GER) && PLAT != '' && GER ! =  ''
+!isNul(PLATAFCD) && !isNull(CODGERCD) && PLATAFC ! = '' && CODGERCD ! = ''
+!isNull(PLATAFCS) && !isNull(CODGERCS) && PLATAFCS ! = '' && CODGERCS != ''
+
+PLAT - cod_hierarquia_plataforma
+GER - cod_hierarquia_gerente
+----
+PLATAFCD - cod_celu_digl_ated
+CODGERCD - cod_crtr_asst_celu_digl
+----
+PLATAFCS - cod_plat_invt_clie
+CODGERCS - cod_crtr_epct_invt
+
+
+
+
+
+
+As condições apresentadas verificam se determinadas variáveis não são nulas (`isNull`) **e** não estão vazias (`!= ''`). Vou explicar cada uma de forma clara:
+
+---
+
+### 1. **`!isNull(PLAT) && !isNull(GER) && PLAT != '' && GER != ''`**
+
+- **`!isNull(PLAT)`**: Verifica se a variável `PLAT` não é nula.
+- **`!isNull(GER)`**: Verifica se a variável `GER` não é nula.
+- **`PLAT != ''`**: Verifica se a variável `PLAT` não é uma string vazia.
+- **`GER != ''`**: Verifica se a variável `GER` não é uma string vazia.
+
+**Condição completa**: Todas as seguintes condições devem ser verdadeiras:
+1. `PLAT` não é nula.
+2. `GER` não é nula.
+3. `PLAT` não está vazia.
+4. `GER` não está vazia.
+
+---
+
+### 2. **`!isNull(PLATAFCD) && !isNull(CODGERCD) && PLATAFCD != '' && CODGERCD != ''`**
+
+- **`!isNull(PLATAFCD)`**: Verifica se a variável `PLATAFCD` não é nula.
+- **`!isNull(CODGERCD)`**: Verifica se a variável `CODGERCD` não é nula.
+- **`PLATAFCD != ''`**: Verifica se a variável `PLATAFCD` não é uma string vazia.
+- **`CODGERCD != ''`**: Verifica se a variável `CODGERCD` não é uma string vazia.
+
+**Condição completa**: Todas as seguintes condições devem ser verdadeiras:
+1. `PLATAFCD` não é nula.
+2. `CODGERCD` não é nula.
+3. `PLATAFCD` não está vazia.
+4. `CODGERCD` não está vazia.
+
+---
+
+### 3. **`!isNull(PLATAFCS) && !isNull(CODGERCS) && PLATAFCS != '' && CODGERCS != ''`**
+
+- **`!isNull(PLATAFCS)`**: Verifica se a variável `PLATAFCS` não é nula.
+- **`!isNull(CODGERCS)`**: Verifica se a variável `CODGERCS` não é nula.
+- **`PLATAFCS != ''`**: Verifica se a variável `PLATAFCS` não é uma string vazia.
+- **`CODGERCS != ''`**: Verifica se a variável `CODGERCS` não é uma string vazia.
+
+**Condição completa**: Todas as seguintes condições devem ser verdadeiras:
+1. `PLATAFCS` não é nula.
+2. `CODGERCS` não é nula.
+3. `PLATAFCS` não está vazia.
+4. `CODGERCS` não está vazia.
+
+---
+
+### Objetivo comum:
+Em todas as condições, o objetivo é garantir que os valores das variáveis sejam válidos e utilizáveis, ou seja:
+- Não sejam nulos (ausentes).
+- Não sejam strings vazias.
+
+Se qualquer uma das condições for falsa, o conjunto completo da condição será avaliado como **falso**.
