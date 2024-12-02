@@ -188,3 +188,44 @@ def test_transform_carteira_uniao(spark):
 
     # Valida se ambos os registros estão no resultado
     assert result.count() == 2
+
+
+def test_transform_carteira_sem_alteracao(spark):
+    """Testa a união dos DataFrames."""
+    # Dados de entrada
+    df_encart_pj = spark.createDataFrame(
+        [
+            ("Empreenda", "K", "1500", "34", "05", "", "", "", ""),
+        ],
+        [
+            "des_segmentacao",
+            "cod_hierarquia_gq_segmento",
+            "cod_hierarquia_plataforma",
+            "cod_hierarquia_gerente",
+            "cod_hierarquia_regiao",
+            "cod_celu_digl_ated",
+            "cod_crtr_asst_celu_digl",
+            "cod_plat_invt_clie",
+            "cod_crtr_epct_invt",
+        ],
+    )
+    df_cache = spark.createDataFrame(
+        [
+            (1, "Empreenda", "K", "1500", "34", "05", "CO"),
+        ],
+        [
+            "id",
+            "segmentonegocio",
+            "segmento",
+            "plataforma",
+            "numero",
+            "regiao",
+            "tipo",
+        ],
+    )
+
+    # Executa a transformação
+    result = transform_carteira(df_encart_pj, df_cache)
+
+    # Valida se ambos os registros estão no resultado
+    assert result.count() == 0

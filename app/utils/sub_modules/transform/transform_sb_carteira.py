@@ -124,12 +124,10 @@ def transform_carteira(df_encart_pj: DataFrame, df_cache: DataFrame) -> DataFram
             when(
                 col("lake_key").isNotNull() & col("cache_key").isNull(),
                 lit("I"),
-            )
-            .when(
+            ).when(
                 col("lake_key").isNull() & col("cache_key").isNotNull(),
                 lit("D"),
-            )
-            .otherwise(lit("")),
+            ),
         )
         .withColumns(
             {
