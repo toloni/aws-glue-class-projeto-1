@@ -43,9 +43,18 @@ def transform_cnpj9(
 
     def prepare_cache(df: DataFrame) -> DataFrame:
         """Prepara o DataFrame de cache ajustando tipos e renomeando colunas."""
-        return df.withColumn(
-            "numerocnpj9", col("numerocnpj9").cast("int")
-        ).withColumnRenamed("hash", "cache_hash")
+        return (
+            df.withColumn("numerocnpj9", col("numerocnpj9").cast("int"))
+            .withColumnRenamed("hash", "cache_hash")
+            .select(
+                "id",
+                "numerocnpj9",
+                "nome",
+                "cache_hash",
+                "empresaprincipalid",
+                "cache_hash",
+            )
+        )
 
     # Preparo dos dados
     df_encart_pj = prepare_encart_pj(df_encart_pj)

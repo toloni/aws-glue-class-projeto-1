@@ -21,10 +21,11 @@ def transform_cnpj14(
     def prepare_encart_pj(df: DataFrame) -> DataFrame:
         """Prepara o DataFrame do encarte PJ filtrando e adicionando hash."""
         df = df.select(
-            "num_cpfcnpj",
-            "num_cpfcnpj14",
             "id_chave_cliente",
+            "num_cpfcnpj14",
+            "num_cpfcnpj",
             "des_nome_cliente_razao_social",
+            "cod_hierarquia_gq_segmento",
             "des_cpfcnpj14_status",
         )
         return df.dropDuplicates(["num_cpfcnpj14"]).withColumn(
@@ -32,6 +33,7 @@ def transform_cnpj14(
             sha2(
                 concat(
                     col("des_nome_cliente_razao_social"),
+                    col("cod_hierarquia_gq_segmento"),
                     col("des_cpfcnpj14_status"),
                 ),
                 256,
@@ -40,10 +42,17 @@ def transform_cnpj14(
 
     def prepare_cache(df: DataFrame) -> DataFrame:
         """Prepara o DataFrame de cache ajustando nomes de colunas."""
-        return df.withColumnRenamed("hash", "cache_hash")
+        return df.withColumnRenamed("hash", "cache_hash").select(
+            "id",
+            "cnpj",
+            "cnpj9",
+            "cnpj9id",
+            "cache_hash",
+        )
 
     # Preparo dos dados
     df_encart_pj = prepare_encart_pj(df_encart_pj)
+    df_encart_pj.show(truncate=False)
     df_cache = prepare_cache(df_cache)
 
     # União dos DataFrames
@@ -70,6 +79,7 @@ def transform_cnpj14(
             "num_cpfcnpj",
             "des_nome_cliente_razao_social",
             "des_cpfcnpj14_status",
+            "cod_hierarquia_gq_segmento",
             "hash",
             "status",
         )

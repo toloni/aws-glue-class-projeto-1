@@ -71,7 +71,7 @@ def __expected_data(spark) -> DataFrame:
                 num_cpfcnpj="105",
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
-                hash="9806535578a25585b252264ed22f5646e25367e461d622e005a7ebdff8666338",
+                hash="a99d9528b5b2df1fbc67cc88e5853746badedd3e235b910913a4681da0cd0813",
                 status="I",
                 data_hora_processamento="",
             ),
@@ -82,7 +82,7 @@ def __expected_data(spark) -> DataFrame:
                 num_cpfcnpj="28",
                 des_nome_cliente_razao_social="EMPRESA 28 EMPRESA 2",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
-                hash="ec19d53958939d5d79ac2ff46be5a87dc78e8b8f32722fd725ddd10103dcdc6c",
+                hash="1514f10b95d88d8372bb600ae8a91813f3c3bfa9d284c65b7e5fea3f25ee5462",
                 status="U",
                 data_hora_processamento="",
             ),
@@ -100,6 +100,7 @@ def __mesh_data(spark) -> DataFrame:
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
                 cod_hierarquia_plataforma="742",
+                cod_hierarquia_gq_segmento="A",
             ),
             Row(
                 num_cpfcnpj="105",
@@ -108,6 +109,7 @@ def __mesh_data(spark) -> DataFrame:
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
                 cod_hierarquia_plataforma="742",
+                cod_hierarquia_gq_segmento="A",
             ),
             Row(
                 num_cpfcnpj="105",
@@ -116,6 +118,7 @@ def __mesh_data(spark) -> DataFrame:
                 des_nome_cliente_razao_social="EMPRESA 105",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
                 cod_hierarquia_plataforma="742",
+                cod_hierarquia_gq_segmento="A",
             ),
             Row(
                 num_cpfcnpj="28",
@@ -124,6 +127,7 @@ def __mesh_data(spark) -> DataFrame:
                 des_nome_cliente_razao_social="EMPRESA 28 EMPRESA 2",
                 des_cpfcnpj14_status="CNPJ14 ATIVO",
                 cod_hierarquia_plataforma="742",
+                cod_hierarquia_gq_segmento="A",
             ),
         ]
     )
