@@ -195,7 +195,7 @@ def test_transform_carteira_sem_alteracao(spark):
     # Dados de entrada
     df_encart_pj = spark.createDataFrame(
         [
-            ("Empreenda", "K", "1500", "34", "05", "", "", "", ""),
+            ("Empreenda", "K", "10", "34", "05", "", "", "", ""),
         ],
         [
             "des_segmentacao",
@@ -211,7 +211,7 @@ def test_transform_carteira_sem_alteracao(spark):
     )
     df_cache = spark.createDataFrame(
         [
-            (1, "Empreenda", "K", "1500", "34", "05", "CO"),
+            (1, "Empreenda", "K", "0010", "34", "05", "CO"),
         ],
         [
             "id",
