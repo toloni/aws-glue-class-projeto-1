@@ -52,7 +52,6 @@ def transform_cnpj14(
 
     # Preparo dos dados
     df_encart_pj = prepare_encart_pj(df_encart_pj)
-    df_encart_pj.show(truncate=False)
     df_cache = prepare_cache(df_cache)
 
     # União dos DataFrames
