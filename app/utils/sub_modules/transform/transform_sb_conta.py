@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, sha2, concat, coalesce
+from pyspark.sql.functions import col, sha2, concat, coalesce, when, lit
 from typing import Dict, Callable
 
 
@@ -20,40 +20,61 @@ def transform_conta(
         DataFrame: DataFrame resultante após a transformação.
     """
 
-    # Função auxiliar para preparar o DataFrame do encarte PJ
     def prepare_encart_pj(df: DataFrame) -> DataFrame:
+
+        chave_conta = [
+            "num_agencia",
+            "num_conta",
+            "num_conta_dac",
+        ]
+
+        df = df.select(
+            "cod_hierarquia_gq_segmento",
+            "des_segmentacao",
+            "id_chave_conta",
+            "num_agencia",
+            "num_conta",
+            "num_conta_dac",
+            "id_chave_cliente",
+            "dat_inicio_relacionamento_harmonizado",
+            "cod_conta_gestora",
+        )
+
         return (
-            df.select(
-                "des_segmentacao",
-                "num_agencia",
-                "num_conta",
-                "num_conta_dac",
-                "des_conta_status",
+            df.withColumn("lake_key", concat(*chave_conta))
+            .withColumn(
+                "contadac",
+                concat("num_conta", "num_conta_dac"),
             )
             .withColumn(
                 "lake_hash",
                 sha2(
                     concat(
-                        col("des_segmentacao"),
-                        col("des_conta_status"),
+                        "cod_hierarquia_gq_segmento",
+                        "des_segmentacao",
+                        "id_chave_cliente",
+                        "cod_conta_gestora",
                     ),
                     256,
                 ),
             )
-            .withColumn(
-                "lake_key",
-                concat(col("num_agencia"), col("num_conta"), col("num_conta_dac")),
-            )
-            .withColumn("contadac", concat(col("num_conta"), col("num_conta_dac")))
         )
 
-    # Função auxiliar para preparar o DataFrame de cache
     def prepare_cache(df: DataFrame) -> DataFrame:
-        return (
-            df.withColumn("agencia", df["agencia"].cast("int"))
-            .withColumn("numeroconta", df["numeroconta"].cast("int"))
-            .withColumnRenamed("hash", "cache_hash")
-            .withColumn("cache_key", concat(col("agencia"), col("numeroconta")))
+        df = df.withColumns(
+            {
+                "agencia": col("agencia").cast("int"),
+                "numeroconta": col("numeroconta").cast("int"),
+            }
+        ).select(
+            "id",
+            "agencia",
+            "numeroconta",
+            "hash",
+        )
+
+        return df.withColumnRenamed("hash", "cache_hash").withColumn(
+            "cache_key", concat(col("agencia"), col("numeroconta"))
         )
 
     # Preparação dos DataFrames
@@ -70,18 +91,20 @@ def transform_conta(
         df_joined.withColumns(when_status())
         .withColumns(
             {
-                "num_agencia": coalesce(col("num_agencia"), col("agencia")),
+                "agencia": coalesce(col("num_agencia"), col("agencia")),
                 "numeroconta": coalesce(col("contadac"), col("numeroconta")),
                 "hash": coalesce(col("lake_hash"), col("cache_hash")),
             }
         )
         .filter(col("status").isNotNull())
         .select(
-            "id",
-            "des_segmentacao",
-            "num_agencia",
+            "id_chave_conta",
+            "agencia",
             "numeroconta",
-            "des_conta_status",
+            "cod_hierarquia_gq_segmento",
+            "des_segmentacao",
+            "dat_inicio_relacionamento_harmonizado",
+            "cod_conta_gestora",
             "hash",
             "status",
         )

@@ -17,6 +17,6 @@ else
     echo "Executando os testes sem cobertura..."
     
     # Executar os testes sem cobertura
-    pytest app/tests/test_transform_sb_carteira.py
+    pytest app/tests/test_transform_sb_conta.py
 
 fi

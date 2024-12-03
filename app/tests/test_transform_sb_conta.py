@@ -1,132 +1,120 @@
 import pytest
-from pyspark.sql import SparkSession, Row, DataFrame
-
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark.sql.functions import lit
 from utils.sub_modules.transform.transform_sb_conta import transform_conta
 from utils.sub_modules.transform.transform import Transformer
 
 
 @pytest.fixture(scope="module")
 def spark():
-    return SparkSession.builder.master("local").appName("unit-tests").getOrCreate()
+    """Configura a sessão PySpark para os testes."""
+    return (
+        SparkSession.builder.master("local[*]")
+        .appName("TestTransformConta")
+        .getOrCreate()
+    )
 
 
-def test_transform(spark):
-    df_mesh = __mesh_data(spark)
-    df_cache = __cache_data(spark)
-
-    df_atual = transform_conta(df_mesh, df_cache, Transformer().define_status_column)
-    df_expected = __expected_data(spark)
-
-    df_atual_row = {}
-    df_expected_row = {}
-
-    delta_columns = [
-        "id",
-        "des_segmentacao",
-        "num_agencia",
-        "numeroconta",
-        "des_conta_status",
-        "hash",
-        "status",
+@pytest.fixture
+def df_encart_pj(spark):
+    """Cria um DataFrame de encarte PJ para os testes."""
+    data = [
+        ("1", "seg1", "A", "101", "202", "9", "C1", "2022-01-01", "G1"),
+        ("2", "seg2", "B", "102", "203", "7", "C2", "2022-02-01", "G2"),
     ]
-
-    for conta in [74521, 74833, 74418]:
-        # Filtrar e garantir que há apenas uma linha por CNPJ
-        atual_rows = df_atual.filter(df_atual.numeroconta == conta).collect()
-        expected_rows = df_expected.filter(df_expected.numeroconta == conta).collect()
-
-        # Armazenar as linhas como dicionários para comparação
-        df_atual_row[conta] = atual_rows[0].asDict()
-        df_expected_row[conta] = expected_rows[0].asDict()
-
-        # Comparar colunas, ignorando 'data_hora_processamento'
-        for column in delta_columns:
-            atual_value = df_atual_row[conta][column]
-            expected_value = df_expected_row[conta][column]
-            assert atual_value == expected_value, (
-                f"Valores diferentes na coluna '{column}' para conta = {conta}: "
-                f"esperado '{expected_value}', mas recebido '{atual_value}'"
-            )
-
-
-def __expected_data(spark) -> DataFrame:
-    return spark.createDataFrame(
+    schema = StructType(
         [
-            Row(
-                id=None,
-                des_segmentacao="CORPORATE",
-                num_agencia="180",
-                numeroconta="74521",
-                des_conta_status="CONTA ATIVA",
-                hash="8b8daf41a23efdc677dce66e31aa5adb5aa589d5e46b7dca39dee93b3178247a",
-                status="I",
-                data_hora_processamento="",
-            ),
-            Row(
-                id="idcontadynamics181",
-                des_segmentacao=None,
-                num_agencia="181",
-                numeroconta="74833",
-                des_conta_status=None,
-                hash="cfa859b220d61934a45483c06d7d6bc7ae093654a41a11e9258d09d3cab5663a",
-                status="D",
-                data_hora_processamento="",
-            ),
-            Row(
-                id="idcontadynamics184",
-                des_segmentacao="RETAIL",
-                num_agencia="184",
-                numeroconta="74418",
-                des_conta_status="CONTA BLOQUEADA",
-                hash="a4e701063a15e96725e04765726bf6c0be6f0938ffdd2da26c3a71fb8a6fce5f",
-                status="U",
-                data_hora_processamento="",
-            ),
+            StructField("cod_hierarquia_gq_segmento", StringType(), True),
+            StructField("des_segmentacao", StringType(), True),
+            StructField("id_chave_conta", StringType(), True),
+            StructField("num_agencia", StringType(), True),
+            StructField("num_conta", StringType(), True),
+            StructField("num_conta_dac", StringType(), True),
+            StructField("id_chave_cliente", StringType(), True),
+            StructField("dat_inicio_relacionamento_harmonizado", StringType(), True),
+            StructField("cod_conta_gestora", StringType(), True),
         ]
     )
+    return spark.createDataFrame(data, schema)
 
 
-def __mesh_data(spark) -> DataFrame:
-    return spark.createDataFrame(
+@pytest.fixture
+def df_cache(spark):
+    """Cria um DataFrame de cache para os testes."""
+    data = [
+        ("A", 101, 2029, "hash1"),
+        (
+            "B",
+            102,
+            2037,
+            "1aac123d660ea3e4b4a7ed7298d42ef723b2adde919f99f97f1dbb1145135f55",
+        ),
+        (
+            "C",
+            103,
+            2045,
+            "1aac123d660ea3e4b4a7ed7298d42ef723b2adde919f99f97f1dbb1145135f55",
+        ),
+    ]
+    schema = StructType(
         [
-            Row(
-                des_segmentacao="CORPORATE",
-                num_agencia="180",
-                num_conta="7452",
-                num_conta_dac="1",
-                des_conta_status="CONTA ATIVA",
-                cod_hierarquia_plataforma="742",
-            ),
-            Row(
-                des_segmentacao="RETAIL",
-                num_agencia="184",
-                num_conta="7441",
-                num_conta_dac="8",
-                des_conta_status="CONTA BLOQUEADA",
-                cod_hierarquia_plataforma="742",
-            ),
+            StructField("id", StringType(), True),
+            StructField("agencia", IntegerType(), True),
+            StructField("numeroconta", IntegerType(), True),
+            StructField("hash", StringType(), True),
         ]
     )
+    return spark.createDataFrame(data, schema)
 
 
-def __cache_data(spark) -> DataFrame:
-    return spark.createDataFrame(
-        [
-            Row(
-                id="idcontadynamics181",
-                agencia="181",
-                numeroconta="74833",
-                hash="cfa859b220d61934a45483c06d7d6bc7ae093654a41a11e9258d09d3cab5663a",
-                status="",
-                datacriacao="",
-            ),
-            Row(
-                id="idcontadynamics184",
-                agencia="184",
-                numeroconta="74418",
-                hash="0000000000a4e701063a15e96725e04765726bf6c0be6f0938ffdd2da26c3a7",
-                status="",
-                datacriacao="",
-            ),
-        ]
+def test_transform_conta_inclusao(spark, df_encart_pj, df_cache):
+    """Testa inclusão de dados (`status = 'I'`)."""
+    df_cache_empty = df_cache.filter(lit(False))  # Cache vazio
+    result = transform_conta(df_encart_pj, df_cache_empty, Transformer().status_col)
+    result_data = result.filter(result["status"] == "I").collect()
+    assert len(result_data) == df_encart_pj.count()
+
+
+def test_transform_conta_exclusao(spark, df_encart_pj, df_cache):
+    """Testa exclusão de dados (`status = 'D'`)."""
+    df_encart_pj_empty = df_encart_pj.filter(lit(False))  # Encarte PJ vazio
+    result = transform_conta(df_encart_pj_empty, df_cache, Transformer().status_col)
+    result_data = result.filter(result["status"] == "D").collect()
+    assert len(result_data) == df_cache.count()
+
+
+def test_transform_conta_atualizacao(spark, df_encart_pj, df_cache):
+    """Testa atualização de dados (`status = 'U'`)."""
+    result = transform_conta(df_encart_pj, df_cache, Transformer().status_col)
+    result_data = result.filter(result["status"] == "U").collect()
+    assert len(result_data) == 1  # Apenas uma conta foi atualizada
+
+
+def test_transform_conta_sem_mudancas(spark, df_encart_pj, df_cache):
+    """Testa que contas iguais não possuem `status`."""
+    # Adiciona o mesmo hash para simular ausência de mudanças
+
+    df_encart_pj = df_encart_pj.withColumns(
+        {
+            "cod_hierarquia_gq_segmento": lit("1"),
+            "des_segmentacao": lit("seg1"),
+            "id_chave_cliente": lit("A"),
+            "cod_conta_gestora": lit("101"),
+            "num_agencia": lit("1"),
+            "num_conta": lit("20"),
+            "num_conta_dac": lit("2"),
+        }
     )
+    df_cache = df_cache.withColumns(
+        {
+            "hash": lit(
+                "c997840f4dbeea4c46f8059521f3eea02716b2e75c8fc632288d998ce94e902c"
+            ),
+            "agencia": lit("1"),
+            "numeroconta": lit("202"),
+        },
+    )
+    result = transform_conta(df_encart_pj, df_cache, Transformer().status_col)
+    result_data = result.filter(result["status"].isNotNull()).collect()
+    assert len(result_data) == 0
