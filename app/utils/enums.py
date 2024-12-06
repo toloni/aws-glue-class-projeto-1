@@ -5,6 +5,7 @@ class Status(Enum):
     INSERT = "I"
     DELETE = "D"
     UPDATE = "U"
+    NO_CHANGE = "N"
 
 
 class Base(Enum):

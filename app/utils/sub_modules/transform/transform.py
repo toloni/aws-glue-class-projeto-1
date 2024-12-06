@@ -20,9 +20,20 @@ class Transformer:
     def define_status_column() -> Dict:
         """Define a coluna de status com base na comparação de hashes."""
         return {
-            "status": when(col("cache_hash").isNull(), lit(Status.INSERT.value))
-            .when(col("lake_hash").isNull(), lit(Status.DELETE.value))
-            .when(col("lake_hash") != col("cache_hash"), lit(Status.UPDATE.value))
+            "status": when(
+                (col("cache_key").isNull()) & (col("lake_key").isNotNull()),
+                lit(Status.INSERT.value),
+            )
+            .when(
+                (col("lake_key").isNull()) & (col("cache_key").isNotNull()),
+                lit(Status.DELETE.value),
+            )
+            .when(
+                (col("cache_key") == col("lake_key"))
+                & (col("lake_hash") != col("cache_hash")),
+                lit(Status.UPDATE.value),
+            )
+            .otherwise(lit(Status.NO_CHANGE.value))  # Adiciona um valor padrão
         }
 
     def transform(

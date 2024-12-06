@@ -29,23 +29,30 @@ def transform_cnpj9(
             "des_cpfcnpj_status",
         )
 
-        return df.dropDuplicates(["num_cpfcnpj"]).withColumn(
-            "lake_hash",
-            sha2(
-                concat(
-                    col("id_chave_cliente"),
-                    col("des_nome_cliente_razao_social"),
-                    col("des_cpfcnpj_status"),
+        return (
+            df.withColumn("l_key", col("num_cpfcnpj"))
+            .dropDuplicates(["num_cpfcnpj"])
+            .withColumn(
+                "l_hash",
+                sha2(
+                    concat(
+                        col("id_chave_cliente"),
+                        col("des_nome_cliente_razao_social"),
+                        col("des_cpfcnpj_status"),
+                    ),
+                    256,
                 ),
-                256,
-            ),
+            )
         )
 
     def prepare_cache(df: DataFrame) -> DataFrame:
         """Prepara o DataFrame de cache ajustando tipos e renomeando colunas."""
+        df = df.withColumn("numerocnpj9", col("numerocnpj9").cast("int")).filter(
+            col("numerocnpj9").isNotNull()
+        )
         return (
-            df.withColumn("numerocnpj9", col("numerocnpj9").cast("int"))
-            .withColumnRenamed("hash", "cache_hash")
+            df.withColumn("r_key", col("numerocnpj9"))
+            .withColumnRenamed("hash", "r_hash")
             .select(
                 "id",
                 "numerocnpj9",
@@ -53,16 +60,17 @@ def transform_cnpj9(
                 "cache_hash",
                 "empresaprincipalid",
                 "cache_hash",
+                "r_key",
             )
         )
 
     # Preparo dos dados
     df_encart_pj = prepare_encart_pj(df_encart_pj)
     df_cache = prepare_cache(df_cache)
-
+    df_cache.show()
     # União dos DataFrames
     df_joined = df_encart_pj.join(
-        df_cache, df_encart_pj["num_cpfcnpj"] == df_cache["numerocnpj9"], "full"
+        df_cache, df_encart_pj["l_key"] == df_cache["r_key"], "full"
     )
 
     # Transformação final

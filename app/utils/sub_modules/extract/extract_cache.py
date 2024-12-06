@@ -31,5 +31,5 @@ def build_path_cache(args):
 
 def extract_cache_s3(path: str, glueContext=GlueContext) -> DataFrame:
     spark = glueContext.spark_session
-    df = spark.read.csv(path, header=True, inferSchema=True, sep=",")
+    df = spark.read.csv(path, header=True, sinferSchema=True, sep=",")
     return df
